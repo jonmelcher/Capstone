@@ -1,2 +1,1 @@
-# Capstone
-Repository for joint Capstone project
+# CMPE2960 - Capstone Project
