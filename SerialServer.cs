@@ -5,32 +5,51 @@ using System.IO.Ports;
 using System.Threading;
 
 
-namespace SerialServer
+namespace Capstone
 {
     public class SerialServer
     {
-        private volatile bool _isRunning;
-        private Queue<char> _incoming;
-        private Queue<char> _outgoing;
+        private const int DEFAULT_TIMEOUT_MS = 1000;
+        private const int DEFAULT_READ_DELAY_MS = 50;
+        private const int DEFAULT_WRITE_DELAY_MS = 50;
 
+        private volatile bool _isRunning;       // status as to whether the server is currently reading/writing
+        private object _syncIncoming;           // key for Incoming Queue
+        private object _syncOutgoing;           // key for Outgoing Queue
+
+        // ********************************************************************************
+        //  method  :   public SerialServer(SerialPortSettings sps)
+        //  purpose :   sets up Incoming/Outgoing keys, and sets up Port without opening it
+        // ********************************************************************************
         public SerialServer(SerialPortSettings sps)
         {
+            _syncIncoming = new object();
+            _syncOutgoing = new object();
+
             Port = new SerialPort(sps.PortName, sps.BaudRate, sps.Parity, sps.DataBits, sps.StopBits);
-            Port.ReadTimeout = 1000;
-            Port.WriteTimeout = 1000;
+            Port.ReadTimeout = DEFAULT_TIMEOUT_MS;
+            Port.WriteTimeout = DEFAULT_TIMEOUT_MS;
         }
 
         private SerialPort Port { get; set; }
         private Thread Reader { get; set; }
         private Thread Writer { get; set; }
+        private Queue<byte> Incoming { get; set; }
+        private Queue<byte> Outgoing { get; set; }
 
+        // ********************************************************************************************
+        //  method  :   public void Start()
+        //  purpose :   allow client to enable writing/reading of the server to/from the current Port
+        //  notes   :   calling the method will create new read/write threads and open the current Port
+        //              as well as create new Incoming/Outgoing Queues
+        // ********************************************************************************************
         public void Start()
         {
             if (_isRunning)
                 return;
 
-            _incoming = new Queue<char>();
-            _outgoing = new Queue<char>();
+            Incoming = new Queue<byte>();
+            Outgoing = new Queue<byte>();
 
             Reader = new Thread(Read);
             Reader.IsBackground = true;
@@ -40,44 +59,66 @@ namespace SerialServer
 
             Port.Open();
             _isRunning = true;
+
             Reader.Start();
             Writer.Start();
         }
 
+        // ************************************************************************************************
+        //  method  :   public void Stop()
+        //  purpose :   allow client to stop the server from writing and reading from the current open Port
+        //  notes   :   calling the method will kill the read/write threads and close the current Port
+        // ************************************************************************************************
         public void Stop()
         {
             if (!_isRunning)
                 return;
 
-            _isRunning = false;
-            Reader.Join();
-            Writer.Join();
-            Port.Close();
+            _isRunning = false;     // toggle
+            Reader.Join();          // wait for reading thread to finish up after _isRunning is toggled
+            Writer.Join();          // wait for writing thread to finish up after _isRunning is toggled
+            Port.Close();           // close the open Port
         }
 
+        // *****************************************************************************************************
+        //  method  :   private void Read()
+        //  purpose :   provide a continuous method to run in a parallel thread method which will read in data
+        //              from the open Port and place it in the Incoming Queue
+        //  notes   :   _syncIncoming should always be used to lock the Outgoing queue since it will be at least
+        //              accessed by the main server thread and the reading thread
+        // *****************************************************************************************************
         private void Read()
         {
             while (_isRunning)
             {
-                lock (_incoming)
+                lock (_syncIncoming)
                 {
                     try
                     {
-                        _incoming.Enqueue((char)Port.ReadChar());
+                        Incoming.Enqueue((byte)Port.ReadChar());
                     }
                     catch (TimeoutException) { }
                 }
+
+                Thread.Sleep(DEFAULT_READ_DELAY_MS);
             }
         }
 
+        // ******************************************************************************************************
+        //  method  :   private void Write()
+        //  purpose :   provide a continuous method to run in a parallel thread method which will write and clear
+        //              contents of Outgoing queue to the open Port
+        //  notes   :   _syncOutgoing should always be used to lock the Outgoing queue since it will be at least
+        //              accessed by the main server thread and the writing thread
+        // ******************************************************************************************************
         private void Write()
         {
             while (_isRunning)
             {
-                lock (_outgoing)
+                lock (_syncOutgoing)
                 {
-                    var buffer = _outgoing.ToArray();
-                    _outgoing.Clear();
+                    var buffer = Outgoing.ToArray();
+                    Outgoing.Clear();
 
                     try
                     {
@@ -85,52 +126,9 @@ namespace SerialServer
                     }
                     catch (TimeoutException) { }
                 }
+
+                Thread.Sleep(DEFAULT_WRITE_DELAY_MS);
             }
         }
-    }
-
-    public class SerialPortSettings
-    {
-        private static readonly List<int> AVAILABLE_BAUD_RATES = new List<int>
-        {
-            110, 150, 300, 1200, 2400, 4800, 9600, 19200,
-            38400, 57600, 115200, 230400, 460800, 921600
-        };
-
-        private const string DEFAULT_PORT_NAME = "COM1";
-        private const int DEFAULT_BAUD_RATE = 19200;
-        private const Parity DEFAULT_PARITY = Parity.None;
-        private const int DEFAULT_DATA_BITS = 8;
-        private const StopBits DEFAULT_STOP_BITS = StopBits.One;
-        private const Handshake DEFAULT_HANDSHAKE = Handshake.None;
-        private const int MAX_DATA_BITS = 8;
-        private const int MIN_DATA_BITS = 5;
-
-        private readonly string _portName;
-        private readonly int _baudRate;
-        private readonly Parity _parity;
-        private readonly int _dataBits;
-        private readonly StopBits _stopBits;
-        private readonly Handshake _handshake;
-
-        public SerialPortSettings(string pN, int bR, Parity p, int dB, StopBits sB, Handshake hs)
-        {
-            var sC = StringComparer.OrdinalIgnoreCase;
-            var availablePorts = SerialPort.GetPortNames();
-
-            _portName = availablePorts.Any(port => sC.Equals(port, pN)) ? pN : DEFAULT_PORT_NAME;
-            _baudRate = AVAILABLE_BAUD_RATES.Contains(bR) ? bR : DEFAULT_BAUD_RATE;
-            _parity = p;
-            _dataBits = (dB >= MIN_DATA_BITS && dB <= MAX_DATA_BITS) ? dB : DEFAULT_DATA_BITS;
-            _stopBits = sB != StopBits.None ? sB : DEFAULT_STOP_BITS;
-            _handshake = hs;
-        }
-
-        public string PortName { get { return _portName; } }
-        public int BaudRate { get { return _baudRate; } }
-        public Parity Parity { get { return _parity; } }
-        public int DataBits { get { return _dataBits; } }
-        public StopBits StopBits { get { return _stopBits; } }
-        public Handshake Handshake { get { return _handshake; } }
     }
 }
