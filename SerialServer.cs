@@ -12,7 +12,8 @@ namespace Capstone
         private const int DEFAULT_TIMEOUT_MS = 1000;
         private const int DEFAULT_READ_DELAY_MS = 50;
         private const int DEFAULT_WRITE_DELAY_MS = 50;
-
+        private const byte STOP_BIT = 0xFF;
+        
         private volatile bool _isRunning;       // status as to whether the server is currently reading/writing
         private object _syncIncoming;           // key for Incoming Queue
         private object _syncOutgoing;           // key for Outgoing Queue
@@ -37,14 +38,14 @@ namespace Capstone
         private Queue<byte> Incoming { get; set; }
         private Queue<byte> Outgoing { get; set; }
 
-        // *************************************************************************************************************
+        // *****************************************************************************************************************
         //  method  :   public byte PollReceived()
         //  purpose :   polls Incoming Queue for a single byte
-        //  notes   :   returns 0xFF if Queue is empty (possible to return this on end of specific transmission as well)
-        // *************************************************************************************************************
+        //  notes   :   returns STOP_BIT if Queue is empty (possible to return this on end of specific transmission as well)
+        // *****************************************************************************************************************
         public byte PollReceived()
         {
-            byte received = 0xFF;
+            byte received = STOP_BIT;
 
             lock (_syncIncoming)
             {
@@ -104,7 +105,7 @@ namespace Capstone
         //              from the open Port and place it in the Incoming Queue
         //  notes   :   _syncIncoming should always be used to lock the Outgoing queue since it will be at least
         //              accessed by the main server thread and the reading thread
-        //              -1 (0xFF) will be enqueued into Incoming if the end of stream is met
+        //              -1 (STOP_BIT) will be enqueued into Incoming if the end of stream is met
         // *****************************************************************************************************
         private void Read()
         {
