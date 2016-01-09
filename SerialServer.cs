@@ -37,6 +37,24 @@ namespace Capstone
         private Queue<byte> Incoming { get; set; }
         private Queue<byte> Outgoing { get; set; }
 
+        // *************************************************************************************************************
+        //  method  :   public byte PollReceived()
+        //  purpose :   polls Incoming Queue for a single byte
+        //  notes   :   returns 0xFF if Queue is empty (possible to return this on end of specific transmission as well)
+        // *************************************************************************************************************
+        public byte PollReceived()
+        {
+            byte received = 0xFF;
+
+            lock (_syncIncoming)
+            {
+                if (Incoming.Count > 0)
+                    received = Incoming.Dequeue();
+            }
+
+            return received;
+        }
+
         // ********************************************************************************************
         //  method  :   public void Start()
         //  purpose :   allow client to enable writing/reading of the server to/from the current Port
@@ -86,6 +104,7 @@ namespace Capstone
         //              from the open Port and place it in the Incoming Queue
         //  notes   :   _syncIncoming should always be used to lock the Outgoing queue since it will be at least
         //              accessed by the main server thread and the reading thread
+        //              -1 (0xFF) will be enqueued into Incoming if the end of stream is met
         // *****************************************************************************************************
         private void Read()
         {
