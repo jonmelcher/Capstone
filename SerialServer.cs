@@ -47,20 +47,20 @@ namespace Capstone
             byte received = STOP_BIT;
 
             lock (_syncIncoming)
-            {
                 if (Incoming.Count > 0)
                     received = Incoming.Dequeue();
-            }
 
             return received;
         }
 
+        // *********************************************************************************
+        //  method  :   public void Transmit(byte b)
+        //  purpose :   enqueues Outgoing queue with a byte to transmit via the Write thread
+        // *********************************************************************************
         public void Transmit(byte b)
         {
             lock (_syncOutgoing)
-            {
                 Outgoing.Enqueue(b);
-            }
         }
 
         // ********************************************************************************************
@@ -71,8 +71,7 @@ namespace Capstone
         // ********************************************************************************************
         public void Start()
         {
-            if (_isRunning)
-                return;
+            Stop();
 
             Incoming = new Queue<byte>();
             Outgoing = new Queue<byte>();
@@ -97,9 +96,6 @@ namespace Capstone
         // ************************************************************************************************
         public void Stop()
         {
-            if (!_isRunning)
-                return;
-
             _isRunning = false;     // toggle
             Reader.Join();          // wait for reading thread to finish up after _isRunning is toggled
             Writer.Join();          // wait for writing thread to finish up after _isRunning is toggled
@@ -124,7 +120,10 @@ namespace Capstone
                     {
                         Incoming.Enqueue((byte)Port.ReadChar());
                     }
-                    catch (TimeoutException) { }
+                    catch (TimeoutException)
+                    {
+                        // turn on LED, send error message, finish queued instructions and halt mechanical ops
+                    }
                 }
 
                 Thread.Sleep(DEFAULT_READ_DELAY_MS);
