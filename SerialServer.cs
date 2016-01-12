@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO.Ports;
 using System.Threading;
 
@@ -13,7 +12,7 @@ namespace Capstone
         private const int DEFAULT_READ_DELAY_MS = 50;
         private const int DEFAULT_WRITE_DELAY_MS = 50;
         private const byte STOP_BIT = 0xFF;
-        
+
         private volatile bool _isRunning;       // status as to whether the server is currently reading/writing
         private object _syncIncoming;           // key for Incoming Queue
         private object _syncOutgoing;           // key for Outgoing Queue
@@ -54,6 +53,14 @@ namespace Capstone
             }
 
             return received;
+        }
+
+        public void Transmit(byte b)
+        {
+            lock (_syncOutgoing)
+            {
+                Outgoing.Enqueue(b);
+            }
         }
 
         // ********************************************************************************************
@@ -135,16 +142,18 @@ namespace Capstone
         {
             while (_isRunning)
             {
+                byte? transmission = null;
                 lock (_syncOutgoing)
+                    if (Outgoing.Count > 0)
+                        transmission = Outgoing.Dequeue();
+                try
                 {
-                    var buffer = Outgoing.ToArray();
-                    Outgoing.Clear();
-
-                    try
-                    {
-                        Port.Write(buffer, 0, buffer.Length);
-                    }
-                    catch (TimeoutException) { }
+                    if (transmission != null)
+                        Port.Write(transmission.ToString());
+                }
+                catch (TimeoutException)
+                {
+                    // turn on LED, send error message, finish queued instructions and halt mechanical ops
                 }
 
                 Thread.Sleep(DEFAULT_WRITE_DELAY_MS);
