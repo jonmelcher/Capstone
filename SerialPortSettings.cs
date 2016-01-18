@@ -42,6 +42,9 @@ namespace Capstone
             _handshake = hs;
         }
 
+        public SerialPortSettings(string pN, int bR) :
+            this(pN, bR, DEFAULT_PARITY, DEFAULT_DATA_BITS, DEFAULT_STOP_BITS, DEFAULT_HANDSHAKE) { }
+
         public string PortName { get { return _portName; } }
         public int BaudRate { get { return _baudRate; } }
         public Parity Parity { get { return _parity; } }
