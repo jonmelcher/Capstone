@@ -27,6 +27,18 @@ namespace Capstone
                 return _q.Dequeue();
         }
 
+        public void Clear()
+        {
+            lock (_syncRoot)
+                _q.Clear();
+        }
+
+        public T ToArray()
+        {
+            lock (_syncRoot)
+                return _q.ToArray();
+        }
+
         public int Count
         {
             get

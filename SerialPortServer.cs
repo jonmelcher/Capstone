@@ -16,6 +16,8 @@ namespace Capstone
             Port.WriteTimeout = DEFAULT_TIMEOUT_MS;
         }
 
+        protected SerialPortServer(string pN, int bR) : this(new SerialPortSettings(pN, bR)) { }
+
         protected SerialPort Port { get; set; }
         protected Thread Reader { get; set; }
         protected Thread Writer { get; set; }
