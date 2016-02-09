@@ -1,4 +1,7 @@
 #include <Stepper.h>
+
+// NYU article code for getting the stepper to move one step at a time, for testing the correctness of wiring.
+// If everything works properly, the stepper will increment forrward once every half-second.
  
 const int stepsPerRevolution = 512;  // change this to fit the number of steps per revolution
                                      // for your motor
