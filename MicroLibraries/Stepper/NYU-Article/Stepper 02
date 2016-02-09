@@ -1,4 +1,7 @@
 #include <Stepper.h>
+
+// NYU article code to be used after testing breadboard wiring.  This will make the stepper revolve completely around - 
+// some testing will be needed to get the correct number of steps used in a complete revolution.
  
 const int stepsPerRevolution = 512;  // change this to fit the number of steps per revolution
                                      // for your motor
