@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.IO.Ports;
 
-
 namespace Capstone
 {
     public class RS232Server : SerialPortServer
@@ -25,18 +24,18 @@ namespace Capstone
         // ********************************************************************************************
         public override void Start()
         {
-            Stop();
+            Stop();  // sets _isRunning to false, ends the read, and closes the port
 
             Incoming = new ThreadSafeQueue<byte>();
             Outgoing = new ThreadSafeQueue<byte>();
 
-            Reader = new Thread(ReaderProcess);
+            Reader = new Thread(ReaderProcess);  // prep threads
             Reader.IsBackground = true;
 
             Writer = new Thread(WriterProcess);
             Writer.IsBackground = true;
 
-            Port.Open();
+            Port.Open();  // open port to begin read
             _isRunning = true;
 
             Reader.Start();
@@ -63,11 +62,11 @@ namespace Capstone
 
         public override void Write(byte[] arr)
         {
-            if (arr == null)
-                return;
+            if (arr == null)  // if we've got an unknown value
+                return;  // fail out
 
-            for (var i = 0; i < arr.Length; ++i)
-                Write(arr[i]);
+            for (var i = 0; i < arr.Length; ++i)  // otherwise
+                Write(arr[i]);  // write the full length of the value out
         }
 
         public override byte Read()

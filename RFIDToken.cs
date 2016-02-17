@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 
-
 namespace Capstone
 {
     public struct RFIDToken
     {
-        private const int ID_LENGTH = 10;
-        private readonly byte[] _id;
+        private const int ID_LENGTH = 10;  // const; all tags are 10 digits in length, or they're invalid
+        private readonly byte[] _id;  // the RFID key
 
+        // checks for a valid id
         public RFIDToken(byte[] id)
         {
             if (id == null)
