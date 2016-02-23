@@ -1,0 +1,13 @@
+CREATE TABLE Vehicles
+(
+	VehicleID int,
+	Mileage int,
+	Stored bit,
+	Tier int,
+	Cell int,
+	Make varchar(255),
+	Model varchar(255),
+	MYear year,
+	Colour varchar(255),
+	Notes varchar(255)
+);
