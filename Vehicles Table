@@ -34,8 +34,6 @@ begin
 // Tier:Cell coordinate system to start at 0:0 (for IO cell) and increment up from there,
 // wrapping after the fifth cell, so 0:5 is followed by 1:0, ending around 4:5 or 5:5
 // depending on how many cells we end up making.
-// When a vehicle is no longer housed in the garage, should the co-ordinate become a non-permissive
-// value, like 9:9 or something?  Will this matter if Stored is changed to false?
 //
 // IMPORTANT: We only have 30-or-so RFID tags, so we shouldn't make more cells than we have tags!
 
@@ -43,5 +41,10 @@ begin
 // Removal:
 
 UPDATE Vehicles
-SET Stored = false;
+SET Stored = false, Tier = 9, Cell = 9
 WHERE VehicleID = @passedID
+
+// When a vehicle is no longer housed in the garage, should the co-ordinate become some out-of-scope
+// value, like 9:9 or something?  Will this matter if Stored is changed to false?  Is it smart to do this
+// so that when we're retrieving stuff, we know exactly what we're getting back, and we won't have multiple
+// entries to a single co-ordinate point?
