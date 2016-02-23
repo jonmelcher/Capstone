@@ -41,10 +41,5 @@ begin
 // Removal:
 
 UPDATE Vehicles
-SET Stored = false, Tier = 9, Cell = 9
+SET Stored = false, Tier = null, Cell = null
 WHERE VehicleID = @passedID
-
-// When a vehicle is no longer housed in the garage, should the co-ordinate become some out-of-scope
-// value, like 9:9 or something?  Will this matter if Stored is changed to false?  Is it smart to do this
-// so that when we're retrieving stuff, we know exactly what we're getting back, and we won't have multiple
-// entries to a single co-ordinate point?
