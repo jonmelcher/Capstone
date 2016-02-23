@@ -11,3 +11,14 @@ CREATE TABLE Vehicles
 	Colour varchar(255),
 	Notes varchar(255)
 );
+
+// Insertion example:
+//
+// INSERT INTO Vehicles
+// VALUES (165716518, 215413, true, 0, 1, Toyota, Shitbox, 1973, Brown, Sedan);
+//
+// Tier:Cell coordinate system to start at 0:0 (for IO cell) and increment up from there,
+// wrapping after the fifth cell, so 0:5 is followed by 1:0, ending around 4:5 or 5:5
+// depending on how many cells we end up making.
+//
+// IMPORTANT: We only have 30-or-so RFID tags, so we can't make move cells than we have tags!
