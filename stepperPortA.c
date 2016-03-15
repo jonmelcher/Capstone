@@ -9,16 +9,16 @@
 #include "stepperPortA.h"
 
 // amount of steps the motor must take to move the rotational platform 360 degrees
-static const unsigned long int MAX_STEPS = 352;
+static const unsigned long int MAX_STEPS = 200;
 
 // amount of delay (ticks) between changes to PORTA
 static const unsigned long int STEPPER_DELAY = 1000;
 
 // exploded ratio of rotational platform degrees to stepper steps
-static const unsigned long long int STEPPER_RATIO = 10200;
+static const unsigned char STEPPER_RATIO = 18;
 
 // exploded ratio factor for the above
-static const unsigned long long int RATIO_FACTOR = 10000;
+static const unsigned char RATIO_FACTOR = 10;
 
 // degrees in circle
 static const unsigned long int DEGREES_IN_CIRCLE = 360;
