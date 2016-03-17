@@ -53,18 +53,20 @@ void stepper_init(StepperA* motor) {
 // function (motor) -> void
 // clears and sets upper nibble of PORTA to reflect current motor state
 void stepper_sync(StepperA* motor) {
-    
+
     unsigned long int i;
-    PORTA &= motor->states[motor->state];
+    unsigned char current = PORTA | STEPPER_BITS;       // gets copy of contents of PORTA with upper nibble totally set
+    current &= motor->states[motor->state];             // syncs upper nibble of motor state to current
+    PORTA = current;                                    // PORTA is synced with motor
     for (i = 0; i < STEPPER_DELAY; ++i);
-    PORTA |= STEPPER_BITS;
+    PORTA |= STEPPER_BITS;                              // torque is released
     for (i = 0; i < STEPPER_DELAY; ++i); 
 }
 
 // function (motor) -> void
 // toggles direction stepper cycles in
 void stepper_toggle_direction(StepperA* motor) {
-    motor->isClockwise = !motor->isClockwise;
+    motor->isClockwise = motor->isClockwise ? 0 : 1;
 }
 
 // function (motor) -> void
@@ -96,10 +98,8 @@ void stepper_circle(StepperA* motor) {
   unsigned long int i = 0;
   unsigned long int count = 0;
   
-  do {
+  do
       stepper_step(motor);
-      for (i = 0; i < STEPPER_DELAY; ++i);
-  }
   while (++count < MAX_STEPS);
 }
 
