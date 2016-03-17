@@ -68,7 +68,7 @@ void vertical_actuator_actuate(VerticalActuatorK* a, unsigned char extensionFlag
     a->isOn = VERTICAL_ACTUATOR_ON_FLAG;
     a->isExtending = extensionFlag;
     vertical_actuator_sync(a);
-    delay_ms(ms);
+    timer_delay_ms(ms);
     vertical_actuator_disable(a);
 }
 
