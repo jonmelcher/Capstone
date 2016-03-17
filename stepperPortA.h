@@ -18,10 +18,8 @@
 #ifndef _STEPPER_PORTA_H_
 #define _STEPPER_PORTA_H_
 
-const unsigned char STEPPER_STATES = 4;
-
 typedef struct StepperPortA {
-    unsigned char states[STEPPER_STATES];
+    unsigned char states[8];
     unsigned char state;
     unsigned char isClockwise;
     unsigned long int steps;
