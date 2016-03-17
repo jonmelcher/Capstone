@@ -9,13 +9,16 @@
 #include "stepperPortA.h"
 
 // amount of steps the motor must take to move the rotational platform 360 degrees
-static const unsigned long int MAX_STEPS = 200;
+static const unsigned long int MAX_STEPS = 400;
+
+// number of transition states of the stepper motor (half steps)
+static const unsigned char STEPPER_STATES = 8;
 
 // amount of delay (ticks) between changes to PORTA
-static const unsigned long int STEPPER_DELAY = 1000;
+static const unsigned long int STEPPER_DELAY = 1500;
 
-// exploded ratio of rotational platform degrees to stepper steps
-static const unsigned char STEPPER_RATIO = 18;
+// number of degrees per state transition (0.9) * 10
+static const unsigned char STEPPER_RATIO = 9;
 
 // exploded ratio factor for the above
 static const unsigned char RATIO_FACTOR = 10;
@@ -26,22 +29,25 @@ static const unsigned long int DEGREES_IN_CIRCLE = 360;
 // stepper output bits
 static const unsigned char STEPPER_BITS = 0xF0;
 
-
 // function (motor) -> void
 // initializes motor values, and array depicting cycle pattern for stepper
 // motor defaults to clockwise movement
 void stepper_init(StepperA* motor) {
 
     motor->states[0] = 0x7F;        // 0111....     ORANGE WIRE
-    motor->states[1] = 0xBF;        // 1011....     GREY WIRE
-    motor->states[2] = 0xDF;        // 1101....     BROWN WIRE
-    motor->states[3] = 0xEF;        // 1110....     RED WIRE
+    motor->states[1] = 0x3F;        // 0011....     HALF-STEP
+    motor->states[2] = 0xBF;        // 1011....     GREY WIRE
+    motor->states[3] = 0x9F;        // 1001....     HALF-STEP
+    motor->states[4] = 0xDF;        // 1101....     BROWN WIRE
+    motor->states[5] = 0xCF;        // 1100....     HALF-STEP
+    motor->states[6] = 0xEF;        // 1110....     RED WIRE
+    motor->states[7] = 0x6F;        // 0110....     HALF-STEP
     motor->state = 0;               // current state of motor (reflects grounded bit in upper nibble)
     motor->steps = 0;               // assume motor is at start position
     motor->isClockwise = 1;         // assume motor starts in clockwise direction
 
     DDRA |= STEPPER_BITS;           // turns on outputs for GPIO
-    stepper_sync(motor);            // syncs PORTA with motor state
+    PORTA |= STEPPER_BITS;          // syncs PORTA with stepper
 }
 
 // function (motor) -> void
@@ -49,11 +55,10 @@ void stepper_init(StepperA* motor) {
 void stepper_sync(StepperA* motor) {
     
     unsigned long int i;
-    
-    PORTA |= STEPPER_BITS;
-    for (i = 0; i < STEPPER_DELAY; ++i); 
     PORTA &= motor->states[motor->state];
     for (i = 0; i < STEPPER_DELAY; ++i);
+    PORTA |= STEPPER_BITS;
+    for (i = 0; i < STEPPER_DELAY; ++i); 
 }
 
 // function (motor) -> void
@@ -72,13 +77,13 @@ void stepper_set_direction(StepperA* motor, unsigned char cw) {
 // steps motor in whichever direction, updates state and syncs motor
 void stepper_step(StepperA* motor) {
 
-    if (motor->isClockwise) {
+    if (!motor->isClockwise) {
         motor->steps = (motor->steps + 1) % MAX_STEPS;
         motor->state = (motor->state + 1) % STEPPER_STATES;
     }
     else {
         motor->steps = (motor->steps + MAX_STEPS - 1) % MAX_STEPS;
-        motor->state = (motor->steps + STEPPER_STATES - 1) % STEPPER_STATES;
+        motor->state = (motor->state + STEPPER_STATES - 1) % STEPPER_STATES;
     }
 
     stepper_sync(motor);
