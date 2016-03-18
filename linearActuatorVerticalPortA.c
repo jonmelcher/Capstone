@@ -93,11 +93,15 @@ void vertical_actuator_transition_tier(VerticalActuatorA* a, unsigned char nextT
     unsigned char retraction = (nextTier < a->tier) ? VERTICAL_ACTUATOR_RETRACTING_FLAG : 0;
     unsigned char tierDifference = retraction ? a->tier - nextTier : nextTier - a->tier;
 
-    if (!tierDifference || nextTier > a->maxTier)
+    if (!tierDifference || nextTier >= a->maxTier)
         return;
     if (a->isDropped)
         vertical_actuator_lift(a);
 
     vertical_actuator_actuate(a, retraction, TIER_INTERVAL_MS * tierDifference);
     a->tier = nextTier;
+}
+
+void vertical_actuator_home(VerticalActuatorA* a) {
+    vertical_actuator_transition_tier(a, 0);
 }

@@ -1,5 +1,5 @@
 // ****************************************************************
-//  filename    :   linearActuatorVerticalPortK.h
+//  filename    :   linearActuatorVerticalPortA.h
 //  purpose     :   header for linearActuatorVerticalPortK.c
 //
 //  written by Jonathan Melcher and Brennan MacGregor on 2016/03/15
@@ -33,5 +33,6 @@ void vertical_actuator_drop(VerticalActuatorA* a);
 void vertical_actuator_lift(VerticalActuatorA* a);
 void vertical_actuator_actuate(VerticalActuatorA* a, unsigned char extensionFlag, unsigned long long int ms);
 void vertical_actuator_transition_tier(VerticalActuatorA* a, unsigned char nextTier);
+void vertical_actuator_home(VerticalActuatorA* a);
 
 #endif
