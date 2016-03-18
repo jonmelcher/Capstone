@@ -33,6 +33,7 @@ void stepper_step(StepperA* motor);
 void stepper_circle(StepperA* motor);
 void stepper_rotate(StepperA* motor, unsigned long int degrees);
 void stepper_home(StepperA* motor);
-void stepper_get_optimal_direction(StepperA* motor, unsigned long int position);
+unsigned char stepper_get_optimal_direction(StepperA* motor, unsigned long int position);
+void stepper_set_position(StepperA* motor, unsigned long int position);
 
 #endif

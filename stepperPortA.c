@@ -130,16 +130,20 @@ void stepper_rotate(StepperA* motor, unsigned long int degrees) {
 // causes stepper to rotate back to starting position in whichever direction is quickest
 // note that the earlier direction state is not retained (can easily change this if nec.)
 void stepper_home(StepperA* motor) {
-
-    stepper_set_direction(motor, stepper_get_optimal_direction(motor, 0));
-    while (motor->steps)
-        stepper_step(motor);
+    stepper_set_position(motor, 0);
     stepper_set_direction(CLOCKWISE);
 }
 
-// function (StepperA*, unsigned long int) -> void
+void stepper_set_position(StepperA* motor, unsigned long int position) {
+    position %= MAX_STEPS;
+    stepper_set_direction(motor, stepper_get_optimal_direction(motor, position));
+    while (motor->steps != position)
+        stepper_step(motor);
+}
+
+// function (StepperA*, unsigned long int) -> unsigned char
 // chooses the optimal direction to step in to reach position from current position
-void stepper_get_optimal_direction(StepperA* motor, unsigned long int position) {
+unsigned char stepper_get_optimal_direction(StepperA* motor, unsigned long int position) {
 
     unsigned long int clockwise;
     unsigned long int counterClockwise;
