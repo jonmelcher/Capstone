@@ -20,17 +20,15 @@ static const unsigned char VERTICAL_ACTUATOR_ON_FLAG = 0x08;
 // signal to send to actuator circuit to enable retraction
 static const unsigned char VERTICAL_ACTUATOR_RETRACTING_FLAG = 0x04;
 
-// corresponds to a 3/4 inch actuation (NEED TO FIND THIS VALUE)
-static const unsigned long long int DROP_INTERVAL_MS = 22000;
+// corresponds to a 1 1/4 inch actuation (NEED TO FIND THIS VALUE)
+static const unsigned long long int DROP_INTERVAL_MS = 6250;
 
 // corresponds to a 3 3/4 inch actuation (NEED TO FIND THIS VALUE)
-static const unsigned long long int TIER_INTERVAL_MS = 22000;
-
+static const unsigned long long int TIER_INTERVAL_MS = 18750;
 
 // function (VerticalActuatorA*, unsigned char) -> void
 // initializes PORTA and state of actuator to be fully retracted and off (make sure this reflects real life)
 void vertical_actuator_init(VerticalActuatorA* a, unsigned char maxTier) {
-
     a->maxTier = maxTier;
     a->tier = 0;                // assume linear actuator is fully retracted
     a->isDropped = 1;           // meaning we are on bottom tier and in dropped position
@@ -103,5 +101,5 @@ void vertical_actuator_transition_tier(VerticalActuatorA* a, unsigned char nextT
 }
 
 void vertical_actuator_home(VerticalActuatorA* a) {
-    vertical_actuator_transition_tier(a, 0);
+    vertical_actuator_actuate(a, VERTICAL_ACTUATOR_RETRACTING_FLAG, TIER_INTERVAL_MS * 4);
 }
