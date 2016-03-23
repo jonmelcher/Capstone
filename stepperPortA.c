@@ -39,7 +39,6 @@ static const unsigned char STEPPER_BITS = 0xF0;
 // initializes motor values, and array depicting cycle pattern for stepper
 // motor defaults to clockwise movement
 void stepper_init(StepperA* motor) {
-
     motor->states[0] = 0xEF;                            // 1110....     RED WIRE
     motor->states[1] = 0xCF;                            // 1100....     HALF-STEP
     motor->states[2] = 0xDF;                            // 1101....     BROWN WIRE
@@ -60,16 +59,15 @@ void stepper_init(StepperA* motor) {
 // function (StepperA*) -> void
 // clears and sets upper nibble of PORTA to reflect current motor state
 void stepper_sync(StepperA* motor) {
-
     unsigned long int i;
     unsigned char currentState = PORTA;                 // gets copy of contents of PORTA
     currentState |= STEPPER_BITS;                       // sets all of upper nibble
     currentState &= motor->states[motor->state];        // syncs upper nibble of motor state to current
 
-    PORTA = currentState;                                    // PORTA is synced with motor
+    PORTA = currentState;                               // PORTA is synced with motor
     for (i = 0; i < STEPPER_DELAY; ++i);
     PORTA |= STEPPER_BITS;                              // torque is released
-    for (i = 0; i < STEPPER_DELAY; ++i); 
+    for (i = 0; i < STEPPER_DELAY; ++i);
 }
 
 // function (StepperA*) -> void
@@ -87,7 +85,6 @@ void stepper_set_direction(StepperA* motor, unsigned char direction) {
 // function (StepperA*) -> void
 // steps motor in whichever direction, updates state and syncs motor
 void stepper_step(StepperA* motor) {
-
     if (motor->direction == CLOCKWISE) {
         motor->steps = (motor->steps + 1) % MAX_STEPS;
         motor->state = (motor->state + 1) % STEPPER_STATES;
@@ -96,7 +93,6 @@ void stepper_step(StepperA* motor) {
         motor->steps = (motor->steps) ? motor->steps - 1 : MAX_STEPS - 1;
         motor->state = (motor->state) ? motor->state - 1 : STEPPER_STATES - 1;
     }
-
     stepper_sync(motor);
 }
 
@@ -105,7 +101,6 @@ void stepper_step(StepperA* motor) {
 void stepper_circle(StepperA* motor) {
 
   unsigned long int count = 0;
-  
   do
       stepper_step(motor);
   while (++count < MAX_STEPS);
@@ -116,15 +111,16 @@ void stepper_circle(StepperA* motor) {
 // note that degrees are always positive; negative we can simply toggle direction and rotate
 void stepper_rotate(StepperA* motor, unsigned long int degrees) {
 
-    unsigned char oldDirection = motor->direction;    
-    unsigned long long int d = degrees;
-    unsigned long long int steps;
+    unsigned char oldDirection = motor->direction;      // keep copy of old direction
+    unsigned long long int d = degrees;                 // copy of inputted degrees
+    unsigned long long int steps;                       // calculated number of steps
     unsigned long long int i;
-    d %= DEGREES_IN_CIRCLE;
-    
-    steps = (d * RATIO_FACTOR) / STEPPER_RATIO;
+    d %= DEGREES_IN_CIRCLE;                             // ensure degrees is in [0, 360)
+    steps = (d * RATIO_FACTOR) / STEPPER_RATIO;         // calculate number of steps required to move d degrees
+    // step calculated number of steps
     for (i = 0; i < steps; ++i)
         stepper_step(motor);
+    // revert direction to old direction
     stepper_set_direction(motor, oldDirection);
 }
 
@@ -136,23 +132,25 @@ void stepper_home(StepperA* motor) {
     stepper_set_direction(motor, CLOCKWISE);
 }
 
-
+// function (StepperA*, unsigned long int) -> void
+// calculates optimal path to rotate and rotates to given position
 void stepper_set_position(StepperA* motor, unsigned long int position) {
-    unsigned char oldDirection = motor->direction;
-    position %= MAX_STEPS;
+    unsigned char oldDirection = motor->direction;      // get copy of old direction
+    position %= MAX_STEPS;                              // make position in [0, MAX_STEPS)
+    // get optimal direction and step to desired position
     stepper_set_direction(motor, stepper_get_optimal_direction(motor, position));
     while (motor->steps != position)
         stepper_step(motor);
+    // revert direction to old direction
     stepper_set_direction(motor, oldDirection);
 }
 
 // function (StepperA*, unsigned long int) -> unsigned char
 // chooses the optimal direction to step in to reach position from current position
 unsigned char stepper_get_optimal_direction(StepperA* motor, unsigned long int position) {
-
     unsigned long int clockwise;
     unsigned long int counterClockwise;
-
+    // calculate amount of steps in clockwise or counterClockwise direction, avoiding underflow
     if (motor->steps >= position) {
         counterClockwise = motor->steps - position;
         clockwise = MAX_STEPS - motor->steps + position;
@@ -161,6 +159,5 @@ unsigned char stepper_get_optimal_direction(StepperA* motor, unsigned long int p
         clockwise = position - motor->steps;
         counterClockwise = MAX_STEPS - position + motor->steps;
     }
-
     return (clockwise < counterClockwise) ? CLOCKWISE : COUNTERCLOCKWISE;
 }
