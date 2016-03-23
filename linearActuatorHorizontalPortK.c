@@ -21,7 +21,7 @@ static const unsigned char HORIZONTAL_ACTUATOR_ON_FLAG = 0x20;
 static const unsigned char HORIZONTAL_ACTUATOR_RETRACTING_FLAG = 0x10;
 
 // amount of time in milliseconds to extend 4 inches (experiment with this)
-static const unsigned long long int EXTENSION_INTERVAL_MS = 22000;
+static const unsigned long long int EXTENSION_INTERVAL_MS = 20000;
 
 
 // function (HorizontalActuatorK*) -> void
