@@ -23,7 +23,7 @@ typedef struct LinearActuatorVerticalPortA {
     unsigned char maxTier;
     unsigned char isDropped;
     unsigned char isOn;
-    unsigned char isExtending;
+    unsigned char isRetracting;
 } VerticalActuatorA;
 
 void vertical_actuator_init(VerticalActuatorA* a, unsigned char maxTier);
