@@ -20,8 +20,8 @@ static const unsigned char VERTICAL_ACTUATOR_ON_FLAG = 0x08;
 // signal to send to actuator circuit to enable retraction
 static const unsigned char VERTICAL_ACTUATOR_RETRACTING_FLAG = 0x04;
 
-// corresponds to a 1 1/4 inch actuation (NEED TO FIND THIS VALUE)
-static const unsigned long long int DROP_INTERVAL_MS = 6250;
+// corresponds to a 2 1/2 inch actuation (NEED TO FIND THIS VALUE)
+static const unsigned long long int DROP_INTERVAL_MS = 12500;
 
 // corresponds to a 3 3/4 inch actuation (NEED TO FIND THIS VALUE)
 static const unsigned long long int TIER_INTERVAL_MS = 18750;
@@ -34,7 +34,7 @@ void vertical_actuator_init(VerticalActuatorA* a, unsigned char maxTier) {
     a->isDropped = 1;           // meaning we are on bottom tier and in dropped position
     a->isOn = 0;
     a->isRetracting = VERTICAL_ACTUATOR_RETRACTING_FLAG;
-    DDRA |= (VERTICAL_ACTUATOR_ON_FLAG | VERTICAL_ACTUATOR_EXTENDING_FLAG);
+    DDRA |= (VERTICAL_ACTUATOR_ON_FLAG | VERTICAL_ACTUATOR_RETRACTING_FLAG);
     vertical_actuator_sync(a);
 }
 
@@ -44,7 +44,7 @@ void vertical_actuator_sync(VerticalActuatorA* a) {
 
     unsigned char currentState = PORTA;          // get copy of PORTA contents
     currentState &= VERTICAL_ACTUATOR_MASK;      // remove bits 3, 2
-    currentState |= a->isOn | a->isExtending;    // send in state of isOn/isRetracting to bits 3, 2
+    currentState |= a->isOn | a->isRetracting;    // send in state of isOn/isRetracting to bits 3, 2
     PORTA = currentState;                        // update PORTA
 }
 
@@ -78,7 +78,7 @@ void vertical_actuator_lift(VerticalActuatorA* a) {
 // actuates in the desired direction for the desired amount of milliseconds then brings to an OFF position
 void vertical_actuator_actuate(VerticalActuatorA* a, unsigned char extensionFlag, unsigned long long int ms) {
     a->isOn = VERTICAL_ACTUATOR_ON_FLAG;
-    a->isExtending = extensionFlag;
+    a->isRetracting = extensionFlag;
     vertical_actuator_sync(a);
     timer_delay_ms(ms);
     vertical_actuator_disable(a);
@@ -94,7 +94,10 @@ void vertical_actuator_transition_tier(VerticalActuatorA* a, unsigned char nextT
     if (!tierDifference || nextTier >= a->maxTier)
         return;
     if (a->isDropped)
+    {
         vertical_actuator_lift(a);
+        timer_delay_ms(1000);
+    }
 
     vertical_actuator_actuate(a, retraction, TIER_INTERVAL_MS * tierDifference);
     a->tier = nextTier;
