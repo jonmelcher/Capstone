@@ -22,6 +22,6 @@ void garage_communication_init(void);
 unsigned char is_garage_rx_ready(void);
 unsigned char garage_rx(void);
 unsigned char is_garage_tx_ready(void);
-unsigned char garage_tx(unsigned char datum);
+void garage_tx(unsigned char datum);
 
 #endif
