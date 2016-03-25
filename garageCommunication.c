@@ -35,7 +35,7 @@ unsigned char is_garage_tx_ready(void) {
     return SCISR1 & TX_EMPTY_MASK;                  // check if TX_EMPTY flag is high
 }
 
-unsigned char garage_tx(unsigned char datum) {
+void garage_tx(unsigned char datum) {
     while (!is_garage_tx_ready()) ;                 // wait until ready to transmit
     SCIDRL = datum;                                 // transmit datum
 }
