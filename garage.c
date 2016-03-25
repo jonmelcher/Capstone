@@ -1,11 +1,10 @@
-// ***************************************************************************
+// **************************************************************************************************************
 //  filename    :   garage.c
-//  purpose     :   provide basic functionality for the combined movement in
-//                  garage using the stepper motor and two linear actuators in
-//                  order to deliver and retrieve cars from cells
+//  purpose     :   interface stepperA motor, horizontalActuatorK actuator and verticalActuatorA actuator
+//                  together to allow client to move cars between the entrance cell and other cells in the garage
 //
-//  written by Jonathan Melcher and Brennan MacGregor on 2016/03/15
-// ***************************************************************************
+//  written by Jonathan Melcher and Brennan MacGregor on 2016/03/17
+// **************************************************************************************************************
 
 
 #include "timer.h"
@@ -15,26 +14,24 @@
 #include "garage.h"
 
 
-#define HOME 0
-
-
+static const unsigned char HOME = 0;
 static const unsigned char CELLS_PER_TIER = 8;
-static const unsigned char TIERS = 3;
 static const unsigned long int DEGREES_BETWEEN_CELLS = 45;
 
 
 void pickup_car_from_cell(VerticalActuatorA* va, HorizontalActuatorK* ha) {
-    vertical_actuator_drop(va);
-    horizontal_actuator_extend(ha);
-    vertical_actuator_lift(va);
-    horizontal_actuator_retract(ha);
+    vertical_actuator_drop(va);                         // send arm into 'dropped' position to reach under car
+    horizontal_actuator_extend(ha);                     // extend into cell
+    vertical_actuator_lift(va);                         // send arm into 'normal' position, now supporting car
+    horizontal_actuator_retract(ha);                    // retract out of cell
 }
 
 void dropoff_car_in_cell(VerticalActuatorA* va, HorizontalActuatorK* ha) {
-    horizontal_actuator_extend(ha);
-    vertical_actuator_drop(va);
-    horizontal_actuator_retract(ha);
-    vertical_actuator_lift(va);
+    vertical_actuator_lift(va);                         // ensure arm is in 'normal' position
+    horizontal_actuator_extend(ha);                     // extend into cell
+    vertical_actuator_drop(va);                         // send arm into 'dropped' position, no longer supporting car
+    horizontal_actuator_retract(ha);                    // retract out of cell
+    vertical_actuator_lift(va);                         // bring arm into 'normal' position
 }
 
 void move_to_cell(StepperA* motor, VerticalActuatorA* va, unsigned char cell) {
