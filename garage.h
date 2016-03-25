@@ -8,6 +8,13 @@
 #ifndef _GARAGE_H_
 #define _GARAGE_H_
 
+typedef GarageInstruction {
+    unsigned char cell;
+    unsigned char direction;
+} Instruction;
+
+void get_instruction(Instruction* ins);
+void automation_process(StepperA* motor, VerticalActuatorA* va, HorizontalActuatorK* ha, Instruction* ins);
 void pickup_car_from_cell(VerticalActuatorA* va, HorizontalActuatorK* ha);
 void dropoff_car_in_cell(VerticalActuatorA* va, HorizontalActuatorK* ha);
 void move_to_cell(StepperA* motor, VerticalActuatorA* va, unsigned char cell);
