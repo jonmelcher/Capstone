@@ -1,20 +1,27 @@
 CREATE TABLE Vehicles
 (
-	VehicleID int,
+	VehicleID char(10) NOT NULL PRIMARY KEY,
+
+	Stored bit NOT NULL,
+	Tier int NOT NULL,
+	Cell int NOT NULL,
+)
+
+CREATE TABLE VehicleInfo
+(
+	VehicleID char(10) NOT NULL FOREIGN KEY REFERENCES Vehicles,
+	
 	Mileage int,
-	Stored bit,
-	Tier int,
-	Cell int,
+	ModelYear datetime,
 	Make varchar(255),
 	Model varchar(255),
-	MYear year,
 	Colour varchar(255),
 	Notes varchar(255)
 )
 
-// Insertion:
+-- Insertion:
 
-if NOT EXISTS // if the vehicle is a new vehicle
+if NOT EXISTS -- if the vehicle is a new vehicle
 (
 	SELECT VehicleID
 	FROM Vehicles
@@ -24,22 +31,65 @@ begin
  	INSERT INTO Vehicles
  	VALUES (@passedID, @passedMileage, true, @plTier, @plCell, @make, @model, @year, @colour, @passedNotes)
 end
-else  // otherwise, we already have a record of the vehicle
+else  -- otherwise, we already have a record of the vehicle
 begin
    	UPDATE Vehicles
 	SET Mileage = @passedMileage, Stored = true, Tier = @plTier, Cell = @plCell, Notes = @passedNotes
 	WHERE VehicleID = @passedID
  end
 
-// Tier:Cell coordinate system to start at 0:0 (for IO cell) and increment up from there,
-// wrapping after the fifth cell, so 0:5 is followed by 1:0, ending around 4:5 or 5:5
-// depending on how many cells we end up making.
-//
-// IMPORTANT: We only have 30-or-so RFID tags, so we shouldn't make more cells than we have tags!
+-- Tier:Cell coordinate system to start at 0:0 (for IO cell) and increment up from there,
+-- wrapping after the fifth cell, so 0:5 is followed by 1:0, ending around 4:5 or 5:5
+-- depending on how many cells we end up making.
+
+-- IMPORTANT: We only have 30-or-so RFID tags, so we shouldn't make more cells than we have tags!
 
 
-// Removal:
+-- Removal:
 
 UPDATE Vehicles
 SET Stored = false, Tier = null, Cell = null
 WHERE VehicleID = @passedID
+
+GO
+
+CREATE PROCEDURE GetRecord
+	@id char(10)
+AS
+	SELECT
+		Stored,
+		Tier,
+		Cell
+	FROM
+		Vehicles
+	WHERE
+		VehicleID = @id
+GO
+
+CREATE PROCEDURE GetRecordInfo
+	@id char(10)
+AS
+	SELECT
+		Mileage,
+		ModelYear,
+		Make,
+		Model,
+		Colour,
+		Notes
+	FROM
+		VehicleInfo
+	WHERE
+		VehicleID = @id
+GO
+
+CREATE PROCEDURE UpdateRecordInfo
+	@id char(10),
+	@mileage int = null,
+	@modelyear datetime = null,
+	@make varchar(255) = null,
+	@model varchar(255) = null,
+	@colour varchar(255) = null,
+	@notes varchar(255) = null
+AS
+	--UPDATE
+GO
