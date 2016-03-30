@@ -1,4 +1,3 @@
-﻿using System;
 using System.Collections.Generic;
 
 
@@ -33,7 +32,7 @@ namespace Capstone
                 _q.Clear();
         }
 
-        public T ToArray()
+        public T[] ToArray()
         {
             lock (_syncRoot)
                 return _q.ToArray();
