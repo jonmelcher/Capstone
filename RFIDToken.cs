@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Linq;
+
 
 namespace Capstone
 {
@@ -15,21 +16,21 @@ namespace Capstone
                 throw new ArgumentNullException("ID has not been initialized!");
             if (id.Length != Length)
                 throw new ArgumentException("ID is not the correct length");
-            if (id.Any(b => !char.IsLetterOrDigit(b)))
+            if (id.Any(b => !char.IsLetterOrDigit((char)b)))
                 throw new ArgumentException("ID is not alphanumeric!");
 
             _id = id;
         }
 
         public byte this[int i] { get { return _id[i]; } }
-        public int Length => ID_LENGTH;
+        public static int Length => ID_LENGTH;
 
         public override string ToString()
         {
             if (_id == null)
                 return null;
 
-            return string.Join("", _id);
+            return new string(_id.Select(b => (char)b).ToArray());
         }
     }
 }
