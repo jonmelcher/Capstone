@@ -57,7 +57,7 @@ namespace Capstone
         // *****************************************************************************************************
         private void ReaderProcess()
         {
-            byte[] buffer = new byte[10];
+            byte[] buffer = new byte[RFIDToken.Length];
 
             while (_isRunning)
             {
@@ -112,6 +112,11 @@ namespace Capstone
         public void ClearCurrent()
         {
             Current = null;
+        }
+
+        public void ClearIncoming()
+        {
+            Incoming.Clear();
         }
     }
 }
