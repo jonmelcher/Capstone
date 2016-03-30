@@ -6,67 +6,55 @@ namespace Capstone
 {
     public static class GarageRepository
     {
-        private static readonly string connectionString = "user id=*****;" +
-                                                          "password=*****;" +
-                                                          "server=bender.net.nait.ca,24680;" +
-                                                          "Trusted_Connection=yes;" +
-                                                          "database=*****;" +
-                                                          "Integrated Security = false;" +
-                                                          "connection timeout=30";
+        private enum VehiclesHeaders { VehicleID, Stored, Tier, Cell }
 
-        private static readonly string vehiclesTableName = "Vehicles";
-        private static readonly string[] vehiclesTableHeaders = new string[]
+        public static GarageAssignment GetGarageAssignment(string id)
         {
-            "VehicleID", "Stored", "Tier", "Cell"
-        };
-
-        public static void UpdateAssignment(GarageAssignment assignment)
-        {
-            string sqlQuery = $"UPDATE {vehiclesTableName} SET {vehiclesTableHeaders[1]} = @stored"
-                            + $" WHERE {vehiclesTableHeaders[0]} = @id";
-
-            try
+            using (var connection = new SqlConnection(DataSource.ConnectionString))
+            using (var command = new SqlCommand())
             {
-                using (var connection = new SqlConnection(connectionString))
+                command.CommandText = "GetVehicleRecord";
+                command.Connection = connection;
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add(new SqlParameter("@id", id));
+
+                try
                 {
                     connection.Open();
-                    var command = new SqlCommand(sqlQuery, connection);
-                    command.Parameters.AddWithValue("@stored", assignment.Stored);
-                    command.Parameters.AddWithValue("@id", assignment.ID);
-                    command.ExecuteNonQuery();
-                }
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.Message);
-            }
-        }
-
-        public static GarageAssignment GetAssignment(string id)
-        {
-            string sqlQuery = $"SELECT {string.Join(", ", vehiclesTableHeaders)} FROM {vehiclesTableName}"
-                            + $" WHERE VehicleID = '{id}'";
-
-            try
-            {
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    var command = new SqlCommand(sqlQuery, connection);
                     var reader = command.ExecuteReader();
+                    if (!reader.HasRows)
+                        return null;
+
                     reader.Read();
-                    return new GarageAssignment((string)reader[vehiclesTableHeaders[0]],
-                                                (bool)reader[vehiclesTableHeaders[1]],
-                                                (int)reader[vehiclesTableHeaders[2]],
-                                                (int)reader[vehiclesTableHeaders[3]]);
+                    return new GarageAssignment((string)reader[VehiclesHeaders.VehicleID.ToString()],
+                                                        (bool)reader[VehiclesHeaders.Stored.ToString()],
+                                                        (int)reader[VehiclesHeaders.Tier.ToString()],
+                                                        (int)reader[VehiclesHeaders.Cell.ToString()]);
                 }
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.Message);
+                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
             }
 
             return null;
+        }
+
+        public static void MoveVehicle(string id, bool isGoingIn)
+        {
+            using (var connection = new SqlConnection(DataSource.ConnectionString))
+            using (var command = new SqlCommand())
+            {
+                command.CommandText = "MoveVehicle";
+                command.Connection = connection;
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add(new SqlParameter("@id", id));
+                command.Parameters.Add(new SqlParameter("@inOrOut", isGoingIn));
+
+                try
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
+            }
         }
     }
 }
