@@ -135,6 +135,7 @@ CREATE PROCEDURE GetVehicleRecord
 	@id char(10)
 AS
 	SELECT
+		VehicleID
 		Stored,
 		Tier,
 		Cell
