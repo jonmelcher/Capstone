@@ -1,17 +1,20 @@
-﻿using System;
+using System;
 using System.Linq;
+using System.Threading;
+
 
 namespace Capstone
 {
     public sealed class Parallax28140Server : SerialPortServer
     {
-        private const int BAUD_RATE = 2400;  // RFID baud
-        private const byte START_TRANSMISSION = 0x0A;  // RFID start bit
-        private const byte STOP_TRANSMISSION = 0x0D;  // RFID end bit
+        private const int BAUD_RATE = 2400;             // RFID baud
+        private const byte START_TRANSMISSION = 0x0A;   // RFID start bit
+        private const byte STOP_TRANSMISSION = 0x0D;    // RFID end bit
 
         public Parallax28140Server(string pN) : base(pN, BAUD_RATE) { }
 
-        private ThreadSafeQueue<RFIDToken> Tokens { get; set; }
+        public RFIDToken? Current { get; private set; } = null;
+        private ThreadSafeQueue<byte> Incoming { get; set; }
 
         // ***************************************************************************************
         //  method  :   public override void Start()
@@ -42,8 +45,8 @@ namespace Capstone
         public override void Stop()
         {
             _isRunning = false;     // toggle
-            Reader.Join();          // wait for reading thread to finish up after _isRunning is toggled
-            Port.Close();           // close the open Port
+            Reader?.Join();          // wait for reading thread to finish up after _isRunning is toggled
+            Port?.Close();           // close the open Port
         }
 
         // *****************************************************************************************************
@@ -71,10 +74,10 @@ namespace Capstone
                             Incoming.Enqueue(read);  // add the final bit to the container
                             byte[] transmission = Incoming.ToArray();  // shift everything to a byte array
                             Incoming.Clear();  // clear the container
-                            if (IsValidTransmission(transmission))  // if we have the correct number of bits
+                            if (IsValidTransmission(transmission) && !Current.HasValue)  // if we have the correct number of bits
                             {
                                 Array.Copy(transmission, 1, buffer, 0, buffer.Length);  // copy
-                                Tokens.Enqueue(new RFIDToken(buffer));  // and enqueue as an RFID token
+                                Current = new RFIDToken(buffer);
                             }
                             break;
                         default:
@@ -84,7 +87,7 @@ namespace Capstone
                 }
                 catch (TimeoutException) { }
 
-                Thread.Sleep(DEFAULT_READ_DELAY_MS);
+                Thread.Sleep(DEFAULT_DELAY_MS);
             }
         }
 
@@ -94,13 +97,21 @@ namespace Capstone
             if (transmission.Length != RFIDToken.Length + 2)  // if we get the wrong length
                 return false;  // fail
             // if we're not bookended by start and stop bits
-            if (transmission.First != START_TRANSMISSION || transmission.Last != STOP_TRANSMISSION)
+            if (transmission.First() != START_TRANSMISSION || transmission.Last() != STOP_TRANSMISSION)
                 return false;  // fail
             // if we get a non-permissable value
-            if (transmission.Any(t => !char.IsLetterOrDigit(t)
-                || t != START_TRANSMISSION || t != STOP_TRANSMISSION))
-                return false;  // fail
-            return true;  // else, succeed
+            for (var i = 1; i < transmission.Length - 1; ++i)
+            {
+                if (!char.IsLetterOrDigit((char)transmission[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public void ClearCurrent()
+        {
+            Current = null;
         }
     }
 }
