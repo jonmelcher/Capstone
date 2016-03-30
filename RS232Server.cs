@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Threading;
-using System.IO.Ports;
+
 
 namespace Capstone
 {
@@ -50,9 +49,9 @@ namespace Capstone
         public override void Stop()
         {
             _isRunning = false;     // toggle
-            Reader.Join();          // wait for reading thread to finish up after _isRunning is toggled
-            Writer.Join();          // wait for writing thread to finish up after _isRunning is toggled
-            Port.Close();           // close the open Port
+            Reader?.Join();          // wait for reading thread to finish up after _isRunning is toggled
+            Writer?.Join();          // wait for writing thread to finish up after _isRunning is toggled
+            Port?.Close();           // close the open Port
         }
 
         public override void Write(byte b)
@@ -104,11 +103,11 @@ namespace Capstone
         {
             while (_isRunning)
             {
-                byte? transmission = Outgoing.Count > 0 ? Outgoing.Dequeue() : null;
+                byte? transmission = (Outgoing.Count > 0) ? (byte?)Outgoing.Dequeue() : null;
                 try
                 {
-                    if (transmission != null)
-                        Port.Write(new byte[] { transmission });
+                    if (transmission.HasValue)
+                        Port.Write(string.Join("", new byte[] { transmission.Value }));
                 }
                 catch (TimeoutException) { }
 
