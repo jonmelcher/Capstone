@@ -1,19 +1,19 @@
-﻿using System;
 using System.IO.Ports;
 using System.Threading;
 
+
 namespace Capstone
 {
-    abstract class SerialPortServer : ISerialWritable, ISerialReadable
+    public abstract class SerialPortServer : ISerialWritable, ISerialReadable
     {
-        protected const int DEFAULT_TIMEOUT_MS = 1000;
+        protected const int DEFAULT_DELAY_MS = 10;
         protected volatile bool _isRunning;
 
         protected SerialPortServer(SerialPortSettings sps)
         {
             Port = new SerialPort(sps.PortName, sps.BaudRate, sps.Parity, sps.DataBits, sps.StopBits);
-            Port.ReadTimeout = DEFAULT_TIMEOUT_MS;
-            Port.WriteTimeout = DEFAULT_TIMEOUT_MS;
+            Port.ReadTimeout = DEFAULT_DELAY_MS;
+            Port.WriteTimeout = DEFAULT_DELAY_MS;
         }
 
         protected SerialPortServer(string pN, int bR) : this(new SerialPortSettings(pN, bR)) { }
@@ -27,6 +27,6 @@ namespace Capstone
 
         public virtual void Write(byte b) { }
         public virtual void Write(byte[] arr) { }
-        public virtual byte Read() { }
+        public virtual byte Read() { return 0; }
     }
 }
