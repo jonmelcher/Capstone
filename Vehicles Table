@@ -203,11 +203,11 @@ GO
 
 CREATE PROCEDURE MoveVehicle
 	@id char(10),
-	@inOrOut bit
+	@isGoingIn bit
 AS
 	UPDATE Vehicles
 		SET
-			Stored = @inOrOut
+			Stored = @isGoingIn
 		WHERE
 			VehicleID = @id
 GO
