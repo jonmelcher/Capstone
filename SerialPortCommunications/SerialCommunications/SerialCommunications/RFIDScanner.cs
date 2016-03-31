@@ -1,16 +1,25 @@
-﻿using System.Linq;
+﻿// ********************************************************************
+//  filename    :   RFIDTransmission.cs
+//  purpose     :   encapsulates process of producing an RFID ID string
+//                  from a stream of bytes
+//
+//  written by Jonathan Melcher and Brennan MacGregor on 2016-03-31
+// ********************************************************************
+
+
+using System.Linq;
 using GenericContainers;
 
 
 namespace SerialCommunications
 {
-    public class RFIDTransmission
+    public sealed class RFIDScanner
     {
         private const byte START_TRANSMISSION = 0x0A;
         private const byte STOP_TRANSMISSION = 0x0D;
         private const byte TRANSMISSION_LENGTH = 10;
 
-        public string CurrentRFIDTag { get; set; }
+        public string CurrentScan { get; set; } = string.Empty;
         private ThreadSafeQueue<byte> Incoming { get; set; } = new ThreadSafeQueue<byte>();
         private RFIDTransmissionState State { get; set; } = RFIDTransmissionState.Waiting;
 
@@ -21,8 +30,14 @@ namespace SerialCommunications
             else if (read == START_TRANSMISSION)
                 State = RFIDTransmissionState.Collecting;
         }
+        
+        public void Clear()
+        {
+            CurrentScan = string.Empty;
+            Incoming.Clear();
+        }
 
-        public void ProcessRead(byte read)
+        private void ProcessRead(byte read)
         {
             switch (read)
             {
@@ -37,19 +52,12 @@ namespace SerialCommunications
                     break;
             }
         }
-        
-        public void Clear()
-        {
-            CurrentRFIDTag = string.Empty;
-            Incoming.Clear();
-        }
-
 
         private void ProcessTransmission()
         {
             var transmission = Incoming.EmptyIntoArray();
             if (IsValidTransmission(transmission))
-                CurrentRFIDTag = GetTransmissionString(transmission);
+                CurrentScan = GetTransmissionString(transmission);
             State = RFIDTransmissionState.Waiting;
         }
 

@@ -19,24 +19,17 @@ namespace SerialCommunications
     public sealed class Parallax28140Server : SerialPortServer
     {
         private const int DEFAULT_DELAY_MS = 10;
+        private RFIDScanner Scanner { get; set; }
 
-        public string CurrentScan => Transmission.CurrentRFIDTag;
-
-        private RFIDTransmission Transmission { get; set; }
+        public string CurrentID => Scanner.CurrentScan;
 
         public Parallax28140Server(SerialPort port) : base(port) { }
 
-        // ***************************************************************************************
-        //  method  :   public override void Start()
-        //  purpose :   allow client to enable reading of the server from the current Port
-        //  notes   :   calling the method will create a new read thread and open the current Port
-        //              as well as create new Incoming Queue
-        // ***************************************************************************************
         public override void StartServer()
         {
             StopServer();
 
-            Transmission = new RFIDTransmission();
+            Scanner = new RFIDScanner();
 
             Reader = new Thread(ReaderProcess);
             Reader.IsBackground = true;
@@ -47,11 +40,6 @@ namespace SerialCommunications
             Reader.Start();
         }
 
-        // ************************************************************************************
-        //  method  :   public override void Stop()
-        //  purpose :   allow client to stop the server from reading from the current open Port
-        //  notes   :   calling the method will kill the read thread and close the current Port
-        // ************************************************************************************
         public override void StopServer()
         {
             _isRunning = false;
@@ -59,12 +47,6 @@ namespace SerialCommunications
             Port.Close();
         }
 
-        // *****************************************************************************************************
-        //  method  :   private void ReaderProcess()
-        //  purpose :   provide a continuous method to run in a parallel thread method which will read in data
-        //              from the open Port and place it in the Incoming Queue
-        //  notes   :   -1 (STOP_BIT) will be enqueued into Incoming if the end of stream is met
-        // *****************************************************************************************************
         private void ReaderProcess()
         {
             while (_isRunning)
@@ -72,9 +54,9 @@ namespace SerialCommunications
                 try
                 {
                     byte read = (byte)Port.ReadChar();
-                    if (CurrentScan != null)
+                    if (CurrentID != string.Empty)
                         continue;
-                    Transmission.ProcessRead(read);
+                    Scanner.Read(read);
                 }
                 catch (TimeoutException) { }
 
@@ -84,7 +66,7 @@ namespace SerialCommunications
 
         public void ClearTransmission()
         {
-            Transmission.Clear();
+            Scanner.Clear();
         }
     }
 }
