@@ -28,12 +28,6 @@ namespace SerialCommunications
 
         public RS232Server(SerialPort port) : base(port) { }
 
-        // ********************************************************************************************
-        //  method  :   public override void Start()
-        //  purpose :   allow client to enable writing/reading of the server to/from the current Port
-        //  notes   :   calling the method will create new read/write threads and open the current Port
-        //              as well as create new Incoming/Outgoing Queues
-        // ********************************************************************************************
         public override void StartServer()
         {
             StopServer();
@@ -54,11 +48,6 @@ namespace SerialCommunications
             Writer.Start();
         }
 
-        // ************************************************************************************************
-        //  method  :   publicI override void Stop()
-        //  purpose :   allow client to stop the server from writing and reading from the current open Port
-        //  notes   :   calling the method will kill the read/write threads and close the current Port
-        // ************************************************************************************************
         public override void StopServer()
         {
             _isRunning = false;
@@ -106,12 +95,6 @@ namespace SerialCommunications
             }
         }
 
-        // ******************************************************************************************************
-        //  method  :   private void WriterProcess()
-        //  purpose :   provide a continuous method to run in a parallel thread method which will write and clear
-        //              contents of Outgoing queue to the open Port
-        //  notes   :   
-        // ******************************************************************************************************
         private void WriterProcess()
         {
             while (_isRunning)
