@@ -10,7 +10,7 @@
 using System;
 
 
-namespace SerialPortCommunications
+namespace SerialCommunications
 {
     public static class SerialPortServerFactory
     {

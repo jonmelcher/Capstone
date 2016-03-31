@@ -48,6 +48,17 @@ namespace GenericContainers
                 return _q.ToArray();
         }
 
+        public T[] EmptyIntoArray()
+        {
+            T[] contents;
+            lock (_syncRoot)
+            {
+                contents = _q.ToArray();
+                _q.Clear();
+            }
+            return contents;
+        }
+
         public int Count
         {
             get

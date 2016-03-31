@@ -43,9 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RFIDTransmission.cs" />
     <Compile Include="Parallax28140Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RFIDToken.cs" />
     <Compile Include="RS232Server.cs" />
     <Compile Include="SerialPortBuilder.cs" />
     <Compile Include="SerialPortServer.cs" />

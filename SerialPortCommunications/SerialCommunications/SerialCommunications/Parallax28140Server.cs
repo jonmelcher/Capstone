@@ -10,22 +10,19 @@
 
 
 using System;
-using System.Linq;
 using System.Threading;
 using System.IO.Ports;
-using GenericContainers;
 
 
-namespace SerialPortCommunications
+namespace SerialCommunications
 {
     public sealed class Parallax28140Server : SerialPortServer
     {
-        private const byte START_TRANSMISSION = 0x0A;
-        private const byte STOP_TRANSMISSION = 0x0D;
         private const int DEFAULT_DELAY_MS = 10;
 
-        public RFIDToken CurrentScan { get; private set; }
-        private ThreadSafeQueue<byte> Incoming { get; set; }
+        public string CurrentScan => Transmission.CurrentRFIDTag;
+
+        private RFIDTransmission Transmission { get; set; }
 
         public Parallax28140Server(SerialPort port) : base(port) { }
 
@@ -39,7 +36,7 @@ namespace SerialPortCommunications
         {
             StopServer();
 
-            Incoming = new ThreadSafeQueue<byte>();
+            Transmission = new RFIDTransmission();
 
             Reader = new Thread(ReaderProcess);
             Reader.IsBackground = true;
@@ -77,7 +74,7 @@ namespace SerialPortCommunications
                     byte read = (byte)Port.ReadChar();
                     if (CurrentScan != null)
                         continue;
-                    ProcessCurrentRead(read);
+                    Transmission.ProcessRead(read);
                 }
                 catch (TimeoutException) { }
 
@@ -85,55 +82,9 @@ namespace SerialPortCommunications
             }
         }
 
-        private void ProcessCurrentRead(byte read)
+        public void ClearTransmission()
         {
-            switch (read)
-            {
-                case START_TRANSMISSION:
-                    Incoming.Clear();
-                    Incoming.Enqueue(read);
-                    break;
-                case STOP_TRANSMISSION:
-                    Incoming.Enqueue(read);
-                    byte[] transmission = Incoming.ToArray();
-                    Incoming.Clear();
-                    if (IsValidTransmission(transmission))
-                    {
-                        var buffer = new byte[RFIDToken.Length];
-                        Array.Copy(transmission, 1, buffer, 0, buffer.Length);
-                        CurrentScan = new RFIDToken(buffer);
-                    }
-                    break;
-                default:
-                    Incoming.Enqueue(read);
-                    break;
-            }
-        }
-
-        // testing for a valid key
-        private bool IsValidTransmission(byte[] transmission)
-        {
-            if (transmission.Length != RFIDToken.Length + 2)  // if we get the wrong length
-                return false;  // fail
-            // if we're not bookended by start and stop bits
-            if (transmission.First() != START_TRANSMISSION || transmission.Last() != STOP_TRANSMISSION)
-                return false;  // fail
-            // if we get a non-permissable value
-            for (var i = 1; i < transmission.Length - 1; ++i)
-                if (!char.IsLetterOrDigit((char)transmission[i]))
-                    return false;
-
-            return true;
-        }
-
-        public void ClearCurrent()
-        {
-            CurrentScan = null;
-        }
-
-        public void ClearIncoming()
-        {
-            Incoming.Clear();
+            Transmission.Clear();
         }
     }
 }

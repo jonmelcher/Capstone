@@ -9,7 +9,7 @@
 using System.IO.Ports;
 
 
-namespace SerialPortCommunications
+namespace SerialCommunications
 {
     public class SerialPortBuilder
     {

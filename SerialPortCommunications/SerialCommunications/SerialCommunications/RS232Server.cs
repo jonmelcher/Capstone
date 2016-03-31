@@ -15,7 +15,7 @@ using System.IO.Ports;
 using GenericContainers;
 
 
-namespace SerialPortCommunications
+namespace SerialCommunications
 {
     public sealed class RS232Server : SerialPortServer
     {
