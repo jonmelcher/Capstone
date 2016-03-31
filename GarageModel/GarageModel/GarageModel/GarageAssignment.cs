@@ -30,7 +30,6 @@ namespace GarageModel
         }
 
         public GarageAssignment(GarageAssignment assignment, bool stored) :
-            this(assignment.ID, stored, assignment.Tier, assignment.Cell)
-        { }
+            this(assignment.ID, stored, assignment.Tier, assignment.Cell) { }
     }
 }
