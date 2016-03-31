@@ -7,7 +7,7 @@
 
 
 using System;
-using SerialPortCommunications;
+using SerialCommunications;
 
 
 namespace RFIDTest
@@ -26,12 +26,12 @@ namespace RFIDTest
 
             while (true)
             {
-                if (server.CurrentScan != null)
+                if (server.CurrentScan != string.Empty)
                 {
                     Console.WriteLine(server.CurrentScan);
                     Console.Write("Press 's' to scan again... ");
                     if (Console.ReadKey().Key == ConsoleKey.S)
-                        server.ClearCurrent();
+                        server.ClearTransmission();
                 }
             }
         }

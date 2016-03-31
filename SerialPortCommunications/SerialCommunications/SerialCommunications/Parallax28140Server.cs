@@ -64,7 +64,7 @@ namespace SerialCommunications
             }
         }
 
-        public void ClearTransmission()
+        public void ClearScanner()
         {
             Scanner.Clear();
         }
