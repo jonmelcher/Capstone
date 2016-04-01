@@ -13,8 +13,7 @@ namespace GarageMediator
         private const byte CONTINUE_INSTRUCTIONS = 0x00;
         private const byte STOP_INSTRUCTIONS = 0x00;
         private const byte INSTRUCTIONS_COMPLETED = 0x00;
-
-        private const int COMMUNICATION_DELAY_MS = 250;
+        private const byte COMMUNICATION_DELAY_MS = 250;
 
         private volatile bool _isRunning;
         private RS232Server MicroCommunication { get; set; }
