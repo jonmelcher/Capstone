@@ -8,12 +8,13 @@ namespace GarageMediator
 {
     public class GarageMediator
     {
-        // TODO:    determine values for this when communicating with microprocessor
-        private const byte START_INSTRUCTIONS = 0x00;
-        private const byte CONTINUE_INSTRUCTIONS = 0x00;
-        private const byte STOP_INSTRUCTIONS = 0x00;
-        private const byte INSTRUCTIONS_COMPLETED = 0x00;
+        private const byte START_INSTRUCTION = 0xF0;
+        private const byte CONTINUE_INSTRUCTION = 0xF1;
+        private const byte STOP_INSTRUCTION = 0xF2;
+        private const byte INSTRUCTIONS_COMPLETED = 0xF3;
         private const byte COMMUNICATION_DELAY_MS = 250;
+        private const byte OUTGOING = 0x20;
+        private const byte INCOMING = 0x21;
 
         private volatile bool _isRunning;
         private RS232Server MicroCommunication { get; set; }
@@ -33,13 +34,13 @@ namespace GarageMediator
 
         private void TransmitInstructions(byte garageCell, bool isGoingIntoCell)
         {
-            MicroCommunication.Write(START_INSTRUCTIONS);
-            WaitForByte(CONTINUE_INSTRUCTIONS);
+            MicroCommunication.Write(START_INSTRUCTION);
+            WaitForByte(CONTINUE_INSTRUCTION);
             MicroCommunication.Write(garageCell);
-            WaitForByte(CONTINUE_INSTRUCTIONS);
-            MicroCommunication.Write(Convert.ToByte(isGoingIntoCell));
-            WaitForByte(CONTINUE_INSTRUCTIONS);
-            MicroCommunication.Write(STOP_INSTRUCTIONS);
+            WaitForByte(CONTINUE_INSTRUCTION);
+            MicroCommunication.Write(isGoingIntoCell ? INCOMING : OUTGOING);
+            WaitForByte(CONTINUE_INSTRUCTION);
+            MicroCommunication.Write(STOP_INSTRUCTION);
         }
 
         private void WaitForByte(byte b)
