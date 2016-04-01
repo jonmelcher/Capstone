@@ -19,7 +19,7 @@ namespace GarageModel
         private GarageRepository _instance;
         private GarageRepository() { }
 
-        public GarageRepository Instance
+        public static GarageRepository Instance
         {
             get
             {
