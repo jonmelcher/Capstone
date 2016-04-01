@@ -50,31 +50,33 @@ namespace GarageMediator
                 Thread.Sleep(COMMUNICATION_DELAY_MS);
         }
 
+        private void ProcessScan(string id)
+        {
+            if (id == string.Empty)
+                return;
+
+            // retrieve assignment from database
+            var assignment = GarageRepository.GetGarageAssignment(id);
+
+            // send instructions to the micro on which cell to retrieve/extract from,
+            // and wait for completion of instructions
+            TransmitInstructions(assignment.Cell, !assignment.Stored);
+            WaitForByte(INSTRUCTIONS_COMPLETED);
+
+            // update database after vehicle has been moved in or out of garage
+            GarageRepository.MoveVehicle(id, !assignment.Stored);
+
+            // clears scanner to start accepting a new scan
+            RFIDCommunication.ClearScanner();
+        }
+
         private void GarageWorkerProcess()
         {
             while (_isRunning)
             {
-                // retrieve current scanned RFID tag
-                var id = RFIDCommunication.CurrentID;
-
-                // if there is a scanned tag...
-                if (id != string.Empty)
-                {
-                    // retrieve assignment from database
-                    var assignment = GarageRepository.GetGarageAssignment(id);
-
-                    TransmitInstructions((byte)assignment.Cell, !assignment.Stored);
-                    WaitForByte(INSTRUCTIONS_COMPLETED);
-
-                    // update database after vehicle has been moved in or out of garage
-                    GarageRepository.MoveVehicle(id, !assignment.Stored);
-
-                    // clears scanner to start accepting a new scan
-                    RFIDCommunication.ClearScanner();
-                }
-
-                // wait some amount of time between checks
-                Thread.Sleep(250);
+                // process currently scanned RFID tag
+                ProcessScan(RFIDCommunication.CurrentID);
+                Thread.Sleep(COMMUNICATION_DELAY_MS);
             }
         }
 
