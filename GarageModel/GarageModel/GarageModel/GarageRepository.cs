@@ -14,14 +14,24 @@ using System.Data.SqlClient;
 
 namespace GarageModel
 {
-    public static class GarageRepository
+    public class GarageRepository
     {
-        // headers for Vehicles Table in Garage Database
-        private enum VehiclesHeaders { VehicleID, Stored, Cell }
+        private GarageRepository _instance;
+        private GarageRepository() { }
+
+        public GarageRepository Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new GarageRepository();
+                return _instance;
+            }
+        }
 
         // retrieve the complete record of a Vehicle in the Vehicles Table
         // based on the given id (primary key)
-        public static GarageAssignment GetGarageAssignment(string id)
+        public GarageAssignment GetGarageAssignment(string id)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
             using (var command = new SqlCommand())
@@ -51,7 +61,7 @@ namespace GarageModel
 
         // update the Vehicle record in the Vehicles Table associated with the given id to
         // reflect whether the Vehicle is inside the garage or not.
-        public static bool MoveVehicle(string id, bool isGoingIn)
+        public bool MoveVehicle(string id, bool isGoingIn)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
             using (var command = new SqlCommand())
@@ -73,5 +83,8 @@ namespace GarageModel
                 return false;
             }
         }
+
+        // headers for Vehicles Table in Garage Database
+        private enum VehiclesHeaders { VehicleID, Stored, Cell }
     }
 }
