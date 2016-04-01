@@ -16,7 +16,7 @@ namespace GarageModel
 {
     public class GarageRepository
     {
-        private GarageRepository _instance;
+        private static GarageRepository _instance;
         private GarageRepository() { }
 
         public static GarageRepository Instance
