@@ -17,7 +17,7 @@ namespace GarageModel
     public static class GarageRepository
     {
         // headers for Vehicles Table in Garage Database
-        private enum VehiclesHeaders { VehicleID, Stored, Tier, Cell }
+        private enum VehiclesHeaders { VehicleID, Stored, Cell }
 
         // retrieve the complete record of a Vehicle in the Vehicles Table
         // based on the given id (primary key)
