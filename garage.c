@@ -18,20 +18,22 @@
 static const unsigned char HOME = 0;
 static const unsigned char CELLS_PER_TIER = 8;
 static const unsigned long int DEGREES_BETWEEN_CELLS = 45;
-static const unsigned char TRANSMISSION_START = 0x80;
-static const unsigned char TRANSMISSION_CONTINUE = 0x40;
-static const unsigned char TRANSMISSION_END = 0x20;
-static const unsigned char OUTGOING = 0x21;
-static const unsigned char INCOMING = 0x22;
+static const unsigned char OUTGOING = 0x20;
+static const unsigned char INCOMING = 0x21;
 static const unsigned long long int DELAY_BETWEEN_MOVEMENTS_MS = 250;
-
+static const unsigned char START_INSTRUCTION = 0xF0;
+static const unsigned char CONTINUE_INSTRUCTION = 0xF1;
+static const unsigned char STOP_INSTRUCTION = 0xF2;
 
 void get_instruction(Instruction* ins) {
-    garage_tx(TRANSMISSION_START);
+    
+    while (garage_rx() != START_INSTRUCTION);
+    garage_tx(CONTINUE_INSTRUCTION);
     ins->cell = garage_rx();
-    garage_tx(TRANSMISSION_CONTINUE);
+    garage_tx(CONTINUE_INSTRUCTION);
     ins->direction = garage_rx();
-    garage_tx(TRANSMISSION_END);
+    garage_tx(CONTINUE_INSTRUCTION);
+    while (garage_rx() != STOP_INSTRUCTION);
 }
 
 void automation_process(StepperA* motor, VerticalActuatorA* va, HorizontalActuatorK* ha, Instruction* ins) {
