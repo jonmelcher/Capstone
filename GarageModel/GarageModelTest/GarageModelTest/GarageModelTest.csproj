@@ -33,7 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GarageModel">
+    <Reference Include="GarageModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\GarageModel\GarageModel\bin\Debug\GarageModel.dll</HintPath>
     </Reference>
     <Reference Include="System" />

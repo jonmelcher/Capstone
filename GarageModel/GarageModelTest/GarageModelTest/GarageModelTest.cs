@@ -17,10 +17,12 @@ namespace GarageModelTest
     {
         static void Main(string[] args)
         {
-            GarageAssignment assignment = GarageRepository.GetGarageAssignment("39009D3D68");
+            var repo = GarageRepository.Instance;
+
+            GarageAssignment assignment = repo.GetGarageAssignment("39009D3D68");
             Console.WriteLine($"{assignment.ID}, {assignment.Stored}, {assignment.Cell}");
-            GarageRepository.MoveVehicle("id", true);
-            assignment = GarageRepository.GetGarageAssignment("39009D3D68");
+            repo.MoveVehicle("id", true);
+            assignment = repo.GetGarageAssignment("39009D3D68");
             Console.WriteLine($"{assignment.ID}, {assignment.Stored}, {assignment.Cell}");
             Console.ReadKey();
         }
