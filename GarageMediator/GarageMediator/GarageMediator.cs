@@ -18,10 +18,8 @@ namespace GarageMediator
         private volatile bool _isRunning;
         private RS232Server MicroCommunication { get; set; }
         private Parallax28140Server RFIDCommunication { get; set; }
+        private GarageRepository DatabaseCommunication { get; set; }
         private Thread GarageWorker { get; set; }
-
-        // TODO:    refactor GarageRepository in the singleton pattern
-        //          use as a property
 
         // constructor
         public GarageMediator()
@@ -30,6 +28,7 @@ namespace GarageMediator
                 SerialPortServerFactory.SerialPortServerType.RS232) as RS232Server;
             RFIDCommunication = SerialPortServerFactory.CreateServer(
                 SerialPortServerFactory.SerialPortServerType.Parallax28140) as Parallax28140Server;
+            DatabaseCommunication = GarageRepository.Instance;
         }
 
         private void TransmitInstructions(byte garageCell, bool isGoingIntoCell)
@@ -55,7 +54,7 @@ namespace GarageMediator
                 return;
 
             // retrieve assignment from database
-            var assignment = GarageRepository.GetGarageAssignment(id);
+            var assignment = DatabaseCommunication.GetGarageAssignment(id);
 
             // send instructions to the micro on which cell to retrieve/extract from,
             // and wait for completion of instructions
@@ -63,7 +62,7 @@ namespace GarageMediator
             WaitForByte(INSTRUCTIONS_COMPLETED);
 
             // update database after vehicle has been moved in or out of garage
-            GarageRepository.MoveVehicle(id, !assignment.Stored);
+            DatabaseCommunication.MoveVehicle(id, !assignment.Stored);
 
             // clears scanner to start accepting a new scan
             RFIDCommunication.ClearScanner();
