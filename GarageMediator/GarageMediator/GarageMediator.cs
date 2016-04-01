@@ -8,6 +8,14 @@ namespace GarageMediator
 {
     public class GarageMediator
     {
+        // TODO:    determine values for this when communicating with microprocessor
+        private const byte START_INSTRUCTIONS = 0x00;
+        private const byte CONTINUE_INSTRUCTIONS = 0x00;
+        private const byte STOP_INSTRUCTIONS = 0x00;
+        private const byte INSTRUCTIONS_COMPLETED = 0x00;
+
+        private const int COMMUNICATION_DELAY_MS = 250;
+
         private volatile bool _isRunning;
         private RS232Server MicroCommunication { get; set; }
         private Parallax28140Server RFIDCommunication { get; set; }
@@ -25,7 +33,22 @@ namespace GarageMediator
                 SerialPortServerFactory.SerialPortServerType.Parallax28140) as Parallax28140Server;
         }
 
+        private void TransmitInstructions(byte garageCell, bool isGoingIntoCell)
+        {
+            MicroCommunication.Write(START_INSTRUCTIONS);
+            WaitForByte(CONTINUE_INSTRUCTIONS);
+            MicroCommunication.Write(garageCell);
+            WaitForByte(CONTINUE_INSTRUCTIONS);
+            MicroCommunication.Write(Convert.ToByte(isGoingIntoCell));
+            WaitForByte(CONTINUE_INSTRUCTIONS);
+            MicroCommunication.Write(STOP_INSTRUCTIONS);
+        }
 
+        private void WaitForByte(byte b)
+        {
+            while (MicroCommunication.Read() != b)
+                Thread.Sleep(COMMUNICATION_DELAY_MS);
+        }
 
         private void GarageWorkerProcess()
         {
@@ -40,17 +63,8 @@ namespace GarageMediator
                     // retrieve assignment from database
                     var assignment = GarageRepository.GetGarageAssignment(id);
 
-                    // move vehicle in or out of garage depending on stored condition...
-                    if (assignment.Stored)
-                    {
-                        // retrieve car from cell
-                        throw new NotImplementedException();
-                    }
-                    else
-                    {
-                        // move car in empty cell to where it belongs in the garage
-                        throw new NotImplementedException();
-                    }
+                    TransmitInstructions((byte)assignment.Cell, !assignment.Stored);
+                    WaitForByte(INSTRUCTIONS_COMPLETED);
 
                     // update database after vehicle has been moved in or out of garage
                     GarageRepository.MoveVehicle(id, !assignment.Stored);
