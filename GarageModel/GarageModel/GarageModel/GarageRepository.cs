@@ -41,8 +41,7 @@ namespace GarageModel
                     reader.Read();
                     return new GarageAssignment((string)reader[VehiclesHeaders.VehicleID.ToString()],
                                                         (bool)reader[VehiclesHeaders.Stored.ToString()],
-                                                        (int)reader[VehiclesHeaders.Tier.ToString()],
-                                                        (int)reader[VehiclesHeaders.Cell.ToString()]);
+                                                        (byte)reader[VehiclesHeaders.Cell.ToString()]);
                 }
                 catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
             }
