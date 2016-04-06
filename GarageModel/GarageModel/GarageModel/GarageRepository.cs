@@ -103,7 +103,7 @@ namespace GarageModel
                 try
                 {
                     connection.Open();
-                    var reader = command.ExecuteReader();
+                    var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
                     if (!reader.HasRows)
                         return null;
 

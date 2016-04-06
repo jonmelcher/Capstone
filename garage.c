@@ -24,6 +24,7 @@ static const unsigned long long int DELAY_BETWEEN_MOVEMENTS_MS = 1000;
 static const unsigned char START_INSTRUCTION = 0xF0;
 static const unsigned char CONTINUE_INSTRUCTION = 0xF1;
 static const unsigned char STOP_INSTRUCTION = 0xF2;
+static const unsigned char INSTRUCTIONS_COMPLETED = 0xF3;
 
 void get_instruction(Instruction* ins) {
     
@@ -45,6 +46,7 @@ void automation_process(StepperA* motor, VerticalActuatorA* va, HorizontalActuat
             take_in_car(motor, va, ha, ins->cell);
             break;
     }
+    garage_tx(INSTRUCTIONS_COMPLETED);
 }
 
 void pickup_car_from_cell(VerticalActuatorA* va, HorizontalActuatorK* ha) {
