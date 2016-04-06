@@ -18,22 +18,22 @@ static const unsigned char HORIZONTAL_ACTUATOR_MASK = 0xCF;
 static const unsigned char HORIZONTAL_ACTUATOR_ON_FLAG = 0x20;
 
 // signal to send to actuator circuit to enable retraction
-static const unsigned char HORIZONTAL_ACTUATOR_RETRACTING_FLAG = 0x10;
+static const unsigned char HORIZONTAL_ACTUATOR_EXTENDING_FLAG = 0x10;
 
-// amount of time in milliseconds to guarantee 4 inche extension/retraction
+// amount of time in milliseconds to guarantee 4 inch extension/retraction
 // (22.5 seconds * 0.2 inches / second = 4.5 inches)
-static const unsigned long long int ACTUATION_INTERVAL_MS = 22500;
+static const unsigned long long int ACTUATION_INTERVAL_MS = 24000;
 
 // amount of time in milliseconds to delay after disabling actuator
-static const unsigned long long int STOP_DELAY_MS = 250;
+static const unsigned long long int STOP_DELAY_MS = 1000;
 
 // function (HorizontalActuatorK*) -> void
 // initializes PORTK and state of actuator to be off and retracting
 // ensure that the real-life counterpart is fully retracted at this point!
 void horizontal_actuator_init(HorizontalActuatorK* a) {
     a->isOn = 0;
-    a->isRetracted = 0;
-    a->isRetracting = HORIZONTAL_ACTUATOR_RETRACTING_FLAG;
+    a->isExtended = 0;
+    a->isExtending = 0;
     DDRK |= ~(HORIZONTAL_ACTUATOR_MASK);
     horizontal_actuator_sync(a);
 }
@@ -43,7 +43,7 @@ void horizontal_actuator_init(HorizontalActuatorK* a) {
 void horizontal_actuator_sync(HorizontalActuatorK* a) {
     unsigned char currentState = PORTK;             // get copy of PORTK contents
     currentState &= HORIZONTAL_ACTUATOR_MASK;       // remove bits 5, 4
-    currentState |= a->isOn | a->isRetracting;      // send in state of isOn/isRetracting to bits 5, 4
+    currentState |= a->isOn | a->isExtending;       // send in state of isOn/isExtending to bits 5, 4
     PORTK = currentState;                           // update PORTK
 }
 
@@ -61,7 +61,7 @@ void horizontal_actuator_actuate(HorizontalActuatorK* a, unsigned char direction
 {
     // set up future actuation state for actuator and synchronize
     a->isOn = HORIZONTAL_ACTUATOR_ON_FLAG;
-    a->isRetracting = directionFlag;
+    a->isExtending = directionFlag;
     horizontal_actuator_sync(a);
 
     // actuate
@@ -75,22 +75,20 @@ void horizontal_actuator_actuate(HorizontalActuatorK* a, unsigned char direction
 // fully retracts actuator if extended
 void horizontal_actuator_retract(HorizontalActuatorK* a) {
 
-    if (a->isRetracted)
+    if (!a->isExtended)
         return;
 
-    horizontal_actuator_actuate(a, HORIZONTAL_ACTUATOR_RETRACTING_FLAG, ACTUATION_INTERVAL_MS);
-
-    a->isRetracted = 1;
+    horizontal_actuator_actuate(a, 0, ACTUATION_INTERVAL_MS);
+    a->isExtended = 0;
 }
 
 // function (HorizontalActuatorK*) -> void
 // fully extends actuator if retracted
 void horizontal_actuator_extend(HorizontalActuatorK* a) {
 
-    if (!a->isRetracted)
+    if (a->isExtended)
         return;
 
-    horizontal_actuator_actuate(a, 0, ACTUATION_INTERVAL_MS);
-
-    a->isRetracted = 0;
+    horizontal_actuator_actuate(a, HORIZONTAL_ACTUATOR_EXTENDING_FLAG, ACTUATION_INTERVAL_MS);
+    a->isExtended = 0;
 }

@@ -20,8 +20,8 @@
 
 typedef struct LinearActuatorHorizontalPortK {
     unsigned char isOn;
-    unsigned char isRetracted;
-    unsigned char isRetracting;
+    unsigned char isExtended;
+    unsigned char isExtending;
 } HorizontalActuatorK;
 
 void horizontal_actuator_init(HorizontalActuatorK* a);

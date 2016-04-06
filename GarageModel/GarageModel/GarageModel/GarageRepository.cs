@@ -29,6 +29,65 @@ namespace GarageModel
             }
         }
 
+        public VehicleInformation GetVehicleInformation(string id)
+        {
+            using (var connection = new SqlConnection(DataSource.ConnectionString))
+            using (var command = new SqlCommand())
+            {
+                command.CommandText = "GetVehicleInfoRecord";
+                command.Connection = connection;
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add(new SqlParameter("@id", id));
+
+
+                try
+                {
+                    connection.Open();
+                    var reader = command.ExecuteReader();
+                    if (!reader.HasRows)
+                        return null;
+
+                    reader.Read();
+                    return new VehicleInformation( (string)reader[VehicleInfoHeaders.VehicleID.ToString()],
+                                                        (int)reader[VehicleInfoHeaders.Mileage.ToString()],
+                                                 (DateTime)reader[VehicleInfoHeaders.ModelYear.ToString()],
+                                                        (string)reader[VehicleInfoHeaders.Make.ToString()],
+                                                       (string)reader[VehicleInfoHeaders.Model.ToString()],
+                                                      (string)reader[VehicleInfoHeaders.Colour.ToString()],
+                                                       (string)reader[VehicleInfoHeaders.Notes.ToString()]);
+                }
+                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
+            }
+
+            return null;
+        }
+
+        public bool UpdateVehicleInformation(string id, int mileage, string colour, string notes)
+        {
+            using (var connection = new SqlConnection(DataSource.ConnectionString))
+            using (var command = new SqlCommand())
+            {
+                command.CommandText = "UpdateVehicleInfoRecord";
+                command.Connection = connection;
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add(new SqlParameter("@id", id));
+                command.Parameters.Add(new SqlParameter("@mileage", mileage));
+                command.Parameters.Add(new SqlParameter("@colour", colour));
+                command.Parameters.Add(new SqlParameter("@notes", notes));
+
+                try
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    return true;
+                }
+                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
+
+                return false;
+            }
+        }
+
+
         // retrieve the complete record of a Vehicle in the Vehicles Table
         // based on the given id (primary key)
         public GarageAssignment GetGarageAssignment(string id)
@@ -86,5 +145,6 @@ namespace GarageModel
 
         // headers for Vehicles Table in Garage Database
         private enum VehiclesHeaders { VehicleID, Stored, Cell }
+        private enum VehicleInfoHeaders { VehicleID, Mileage, ModelYear, Make, Model, Colour, Notes }
     }
 }

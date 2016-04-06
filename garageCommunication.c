@@ -15,27 +15,27 @@ static const unsigned char TX_EMPTY_MASK = 0x80;
 
 
 void garage_communication_init(void) {
-    SCIBD = 19200_BAUDRATE_MODIFIER;                // sets baud-rate to 19200
+    SCI0BD = 19200_BAUDRATE_MODIFIER;               // sets baud-rate to 19200
     SCI0CR1 = 0;                                    // wait-mode enabled, no loopback, 8-bit data
     SCI0CR2 = 0x0C;                                 // wake-up on start, no parity checking, TX/RX enabled, no interrupts
 }
 
 unsigned char is_garage_rx_ready(void) {
-    return SCISR1 & RX_FULL_MASK;                   // check if RX_FULL flag is high
+    return SCI0SR1 & RX_FULL_MASK;                  // check if RX_FULL flag is high
 }
 
 unsigned char garage_rx(void) {
     unsigned char rxed;
     while (!is_garage_rx_ready());                  // wait until datum is received
-    rxed = SCIDRL;                                  // retrieve datum
+    rxed = SCI0DRL;                                 // retrieve datum
     return rxed;
 }
 
 unsigned char is_garage_tx_ready(void) {
-    return SCISR1 & TX_EMPTY_MASK;                  // check if TX_EMPTY flag is high
+    return SCI0SR1 & TX_EMPTY_MASK;                 // check if TX_EMPTY flag is high
 }
 
 void garage_tx(unsigned char datum) {
     while (!is_garage_tx_ready()) ;                 // wait until ready to transmit
-    SCIDRL = datum;                                 // transmit datum
+    SCI0DRL = datum;                                // transmit datum
 }

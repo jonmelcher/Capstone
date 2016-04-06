@@ -17,10 +17,10 @@ void timer_init_8us(void) {
     TSCR1 |= 0x80;      // enable timer module
     TSCR2 &= 0xF8;      // set prescale to Bus/64 (8 us)
     TSCR2 |= 0x06;      // ... continued
-    TIOS |= 0x01;       // set IOS0 to output compare
+    TIOS  |= 0x01;      // set IOS0 to output compare
     TCTL2 &= 0xFC;      // set PT0 to toggle mode
     TCTL2 |= 0x01;      // ... continued
-    TFLG |= 0x01;       // clear flag
+    TFLG1 |= 0x01;      // clear flag
 }
 
 void timer_delay_ms(unsigned long long int ms) {

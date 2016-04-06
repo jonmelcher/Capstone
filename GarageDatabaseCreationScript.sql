@@ -1,4 +1,4 @@
-use bmacgregor3
+use jmelcher1
 go
 
 -- if tables exist, drop them...
@@ -6,7 +6,7 @@ go
 if exists
 (
 	select	[name]
-	from	bmacgregor3.dbo.sysobjects
+	from	jmelcher1.dbo.sysobjects
 	where	[name] = 'VehicleInfo'
 )
 drop table VehicleInfo
@@ -15,7 +15,7 @@ go
 if exists
 (
 	select	[name]
-	from	bmacgregor3.dbo.sysobjects
+	from	jmelcher1.dbo.sysobjects
 	where	[name] = 'Vehicles'
 )
 drop table Vehicles
@@ -50,7 +50,7 @@ GO
 if exists
 (
 	select	[name]
-	from	bmacgregor3.dbo.sysobjects
+	from	jmelcher1.dbo.sysobjects
 	where	[name] = 'InsertVehicle'
 )
 drop procedure InsertVehicle
@@ -59,7 +59,7 @@ go
 if exists
 (
 	select	[name]
-	from	bmacgregor3.dbo.sysobjects
+	from	jmelcher1.dbo.sysobjects
 	where	[name] = 'GetVehicleRecord'
 )
 drop procedure GetVehicleRecord
@@ -68,7 +68,7 @@ go
 if exists
 (
 	select	[name]
-	from	bmacgregor3.dbo.sysobjects
+	from	jmelcher1.dbo.sysobjects
 	where	[name] = 'GetVehicleInfoRecord'
 )
 drop procedure GetVehicleInfoRecord
@@ -77,7 +77,7 @@ go
 if exists
 (
 	select	[name]
-	from	bmacgregor3.dbo.sysobjects
+	from	jmelcher1.dbo.sysobjects
 	where	[name] = 'UpdateVehicleInfoRecord'
 )
 drop procedure UpdateVehicleInfoRecord
@@ -86,7 +86,7 @@ go
 if exists
 (
 	select	[name]
-	from	bmacgregor3.dbo.sysobjects
+	from	jmelcher1.dbo.sysobjects
 	where	[name] = 'AddRandomMileage'
 )
 drop procedure AddRandomMileage
@@ -95,7 +95,7 @@ go
 if exists
 (
 	select	[name]
-	from	bmacgregor3.dbo.sysobjects
+	from	jmelcher1.dbo.sysobjects
 	where	[name] = 'MoveVehicle'
 )
 drop procedure MoveVehicle
