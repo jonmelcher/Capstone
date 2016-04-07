@@ -28,5 +28,10 @@ namespace GarageModel
 
         public GarageAssignment(GarageAssignment assignment, bool stored) :
             this(assignment.ID, stored, assignment.Cell) { }
+
+        public override string ToString()
+        {
+            return $"ID: {ID}, Stored: {Stored}, Cell: {Cell}";
+        }
     }
 }

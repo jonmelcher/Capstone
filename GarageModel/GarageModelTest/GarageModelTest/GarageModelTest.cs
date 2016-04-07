@@ -21,7 +21,7 @@ namespace GarageModelTest
 
             GarageAssignment assignment = repo.GetGarageAssignment("39009D3D68");
             Console.WriteLine($"{assignment.ID}, {assignment.Stored}, {assignment.Cell}");
-            repo.MoveVehicle("id", true);
+            repo.MoveVehicle("39009D3D68", false);
             assignment = repo.GetGarageAssignment("39009D3D68");
             Console.WriteLine($"{assignment.ID}, {assignment.Stored}, {assignment.Cell}");
             Console.ReadKey();

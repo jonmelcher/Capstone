@@ -29,10 +29,10 @@ namespace GarageModel
         private static string GetConnectionString()
         {
             var builder = new SqlConnectionStringBuilder();
-            builder.UserID = "********";
-            builder.Password = "********";
-            builder.InitialCatalog = "********";
-            builder.DataSource = "********";
+            builder.UserID = "jmelcher1";
+            builder.Password = "00Hobokin00";
+            builder.InitialCatalog = "jmelcher1";
+            builder.DataSource = "bender.net.nait.ca,24680";
             builder.ConnectTimeout = 30;
             return builder.ConnectionString;
         }

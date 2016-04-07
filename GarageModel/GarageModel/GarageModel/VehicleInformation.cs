@@ -25,5 +25,10 @@ namespace GarageModel
             Colour = colour;
             Notes = notes;
         }
+
+        public override string ToString()
+        {
+            return $"ID: {ID}, Mileage: {Mileage}, ModelYear: {ModelYear}, Make: {Make}, Model: {Model}, Colour: {Colour}\n\n{Notes}";
+        }
     }
 }

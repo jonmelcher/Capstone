@@ -21,6 +21,14 @@ namespace GarageMediator
         private Parallax28140Server RFIDCommunication { get; set; }
         private GarageRepository DatabaseCommunication { get; set; }
         private Thread GarageWorker { get; set; }
+        private event Action<object, GarageAssignment> _RFIDTagScanned;
+        private string IDBeingProcessed { get; set; } = string.Empty;
+
+        public event Action<object, GarageAssignment> RFIDTagScanned
+        {
+            add { _RFIDTagScanned += value; }
+            remove { _RFIDTagScanned -= value; }
+        }
 
         // constructor
         public GarageMediator()
@@ -51,22 +59,34 @@ namespace GarageMediator
 
         private void ProcessScan(string id)
         {
-            if (id == string.Empty)
+            // skip if no tag is scanned or a tag is being processed
+            if (id == string.Empty || IDBeingProcessed != string.Empty)
                 return;
 
             // retrieve assignment from database
             var assignment = DatabaseCommunication.GetGarageAssignment(id);
 
-            // send instructions to the micro on which cell to retrieve/extract from,
-            // and wait for completion of instructions
+            // update ID being processed
+            IDBeingProcessed = assignment.ID;
+
+            // raise Tag scanned event
+            _RFIDTagScanned(this, assignment);
+        }
+
+        public void CommunicationProcess(GarageAssignment assignment)
+        {
+            // transmit cell and direction of movement to micro
             TransmitInstructions(assignment.Cell, !assignment.Stored);
+
+            // wait for movement completion
             WaitForByte(INSTRUCTIONS_COMPLETED);
 
             // update database after vehicle has been moved in or out of garage
-            DatabaseCommunication.MoveVehicle(id, !assignment.Stored);
+            DatabaseCommunication.MoveVehicle(assignment.ID, !assignment.Stored);
 
-            // clears scanner to start accepting a new scan
+            // clears scanner and processing ID to start accepting a new scan
             RFIDCommunication.ClearScanner();
+            IDBeingProcessed = string.Empty;
         }
 
         private void GarageWorkerProcess()

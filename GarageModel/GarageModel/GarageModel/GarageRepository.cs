@@ -9,6 +9,7 @@
 
 
 using System;
+using System.Data;
 using System.Data.SqlClient;
 
 
@@ -36,14 +37,14 @@ namespace GarageModel
             {
                 command.CommandText = "GetVehicleInfoRecord";
                 command.Connection = connection;
-                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@id", id));
 
 
                 try
                 {
                     connection.Open();
-                    var reader = command.ExecuteReader();
+                    var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
                     if (!reader.HasRows)
                         return null;
 
@@ -69,7 +70,7 @@ namespace GarageModel
             {
                 command.CommandText = "UpdateVehicleInfoRecord";
                 command.Connection = connection;
-                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@id", id));
                 command.Parameters.Add(new SqlParameter("@mileage", mileage));
                 command.Parameters.Add(new SqlParameter("@colour", colour));
@@ -97,7 +98,7 @@ namespace GarageModel
             {
                 command.CommandText = "GetVehicleRecord";
                 command.Connection = connection;
-                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@id", id));
 
                 try
@@ -108,6 +109,8 @@ namespace GarageModel
                         return null;
 
                     reader.Read();
+                    System.Diagnostics.Debug.WriteLine(reader.FieldCount);
+                    System.Diagnostics.Debug.WriteLine(reader.RecordsAffected);
                     return new GarageAssignment((string)reader[VehiclesHeaders.VehicleID.ToString()],
                                                         (bool)reader[VehiclesHeaders.Stored.ToString()],
                                                         (byte)reader[VehiclesHeaders.Cell.ToString()]);
@@ -127,9 +130,9 @@ namespace GarageModel
             {
                 command.CommandText = "MoveVehicle";
                 command.Connection = connection;
-                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@id", id));
-                command.Parameters.Add(new SqlParameter("@inOrOut", isGoingIn));
+                command.Parameters.Add(new SqlParameter("@isGoingIn", isGoingIn));
 
                 try
                 {
