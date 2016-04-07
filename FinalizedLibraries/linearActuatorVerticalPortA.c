@@ -10,7 +10,8 @@
 #include "timer.h"
 #include "linearActuatorVerticalPortA.h"
 
-
+// PIN 60 - POWER (ON / OFF)
+// PIN 59 - DIRECTION (EXTENDING / RETRACTING)
 // inverse of actuator bits
 static const unsigned char VERTICAL_ACTUATOR_MASK = 0xF3;
 

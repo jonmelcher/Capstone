@@ -8,7 +8,7 @@
 #ifndef _GARAGE_H_
 #define _GARAGE_H_
 
-typedef GarageInstruction {
+typedef struct GarageInstruction {
     unsigned char cell;
     unsigned char direction;
 } Instruction;

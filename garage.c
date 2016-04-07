@@ -50,32 +50,32 @@ void automation_process(StepperA* motor, VerticalActuatorA* va, HorizontalActuat
 }
 
 void pickup_car_from_cell(VerticalActuatorA* va, HorizontalActuatorK* ha) {
-    vertical_actuator_drop(va);                         // lower arm into 'dropped' position to reach under car
-    timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
+    //vertical_actuator_drop(va);                         // lower arm into 'dropped' position to reach under car
+    //timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
     horizontal_actuator_extend(ha);                     // extend arm into cell to be underneath car
     timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
-    vertical_actuator_lift(va);                         // raise arm into 'normal' position, now supporting car
-    timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
+    //vertical_actuator_lift(va);                         // raise arm into 'normal' position, now supporting car
+    //timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
     horizontal_actuator_retract(ha);                    // retract arm out of cell, now with car in tow
     timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
 }
 
 void dropoff_car_in_cell(VerticalActuatorA* va, HorizontalActuatorK* ha) {
-    vertical_actuator_lift(va);                         // ensure arm is in 'normal' position
-    timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
+    //vertical_actuator_lift(va);                         // ensure arm is in 'normal' position
+    //timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
     horizontal_actuator_extend(ha);                     // extend into cell
     timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
-    vertical_actuator_drop(va);                         // send arm into 'dropped' position, no longer supporting car
-    timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
+    //vertical_actuator_drop(va);                         // send arm into 'dropped' position, no longer supporting car
+    //timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
     horizontal_actuator_retract(ha);                    // retract out of cell
     timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
-    vertical_actuator_lift(va);                         // bring arm into 'normal' position
-    timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
+    //vertical_actuator_lift(va);                         // bring arm into 'normal' position
+    //timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
 }
 
 void move_to_cell(StepperA* motor, VerticalActuatorA* va, unsigned char cell) {
     unsigned char tier = cell / CELLS_PER_TIER;
-    unsigned long int position = (cell % CELL_PER_TIER) * DEGREES_BETWEEN_CELLS;
+    unsigned long int position = (cell % CELLS_PER_TIER) * DEGREES_BETWEEN_CELLS;
     vertical_actuator_transition_tier(va, tier);        // move if necessary to appropriate tier
     timer_delay_ms(DELAY_BETWEEN_MOVEMENTS_MS);
     stepper_set_position(motor, position);              // rotate if necessary to appropriate cell

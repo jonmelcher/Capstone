@@ -133,7 +133,7 @@ CREATE PROCEDURE GetVehicleRecord
 	@id char(10)
 AS
 	SELECT
-		VehicleID
+		VehicleID,
 		Stored,
 		Cell
 	FROM
