@@ -10,8 +10,6 @@
 #include "timer.h"
 
 
-static const unsigned char 8US_PERIODS_IN_1_MS = 125;
-
 
 void timer_init_8us(void) {
     TSCR1 |= 0x80;      // enable timer module
@@ -25,10 +23,10 @@ void timer_init_8us(void) {
 
 void timer_delay_ms(unsigned long long int ms) {
     unsigned long long int count;
-    TC0 = TCNT + 8US_PERIODS_IN_1_MS;
+    TC0 = TCNT + 125;
     for (count = 0; count < ms; ++count) {
         TFLG1 |= 0x01;
         while (!(TFLG1 & 0x01));
-        TC0 += 8US_PERIODS_IN_1_MS;
+        TC0 += 125;
     }
 }

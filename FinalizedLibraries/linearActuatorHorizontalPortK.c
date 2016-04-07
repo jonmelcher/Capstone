@@ -11,6 +11,8 @@
 #include "linearActuatorHorizontalPortK.h"
 
 
+// PIN 19 - POWER (ON / OFF)
+// PIN 20 - DIRECTION (EXTENDING / RETRACTING)
 // inverse of horizontal actuator bits
 static const unsigned char HORIZONTAL_ACTUATOR_MASK = 0xCF;
 
@@ -22,7 +24,7 @@ static const unsigned char HORIZONTAL_ACTUATOR_EXTENDING_FLAG = 0x10;
 
 // amount of time in milliseconds to guarantee 4 inch extension/retraction
 // (22.5 seconds * 0.2 inches / second = 4.5 inches)
-static const unsigned long long int ACTUATION_INTERVAL_MS = 24000;
+static const unsigned long long int ACTUATION_INTERVAL_MS = 26000;
 
 // amount of time in milliseconds to delay after disabling actuator
 static const unsigned long long int STOP_DELAY_MS = 1000;
@@ -90,5 +92,5 @@ void horizontal_actuator_extend(HorizontalActuatorK* a) {
         return;
 
     horizontal_actuator_actuate(a, HORIZONTAL_ACTUATOR_EXTENDING_FLAG, ACTUATION_INTERVAL_MS);
-    a->isExtended = 0;
+    a->isExtended = 1;
 }

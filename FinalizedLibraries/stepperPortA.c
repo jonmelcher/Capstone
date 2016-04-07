@@ -21,7 +21,7 @@ static const unsigned long int MAX_STEPS = 400;
 static const unsigned char STEPPER_STATES = 8;
 
 // amount of delay (ticks) between changes to PORTA
-static const unsigned long int STEPPER_DELAY = 1500;
+static const unsigned long int STEPPER_DELAY = 1250;
 
 // number of degrees per state transition (0.9) * 10
 static const unsigned char STEPPER_RATIO = 9;
@@ -65,9 +65,8 @@ void stepper_sync(StepperA* motor) {
     currentState &= motor->states[motor->state];        // syncs upper nibble of motor state to current
 
     PORTA = currentState;                               // PORTA is synced with motor
-    for (i = 0; i < STEPPER_DELAY; ++i);
-    PORTA |= STEPPER_BITS;                              // torque is released
-    for (i = 0; i < STEPPER_DELAY; ++i);
+    for (i = 0; i < STEPPER_DELAY << 1; ++i);
+    PORTA |= STEPPER_BITS;
 }
 
 // function (StepperA*) -> void
