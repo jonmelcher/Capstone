@@ -17,26 +17,14 @@ namespace GarageMediator
 
         public event Action VehicleProcessed
         {
-            add
-            {
-                MediatorProcessingState.VehicleProcessed += value;
-            }
-            remove
-            {
-                MediatorProcessingState.VehicleProcessed -= value;
-            }
+            add { MediatorProcessingState.VehicleProcessed += value; }
+            remove { MediatorProcessingState.VehicleProcessed -= value; }
         }
 
         public event Action<GarageAssignment, VehicleInformation> IDScanned
         {
-            add
-            {
-                MediatorListeningState.IDScanned += value;
-            }
-            remove
-            {
-                MediatorListeningState.IDScanned -= value;
-            }
+            add { MediatorListeningState.IDScanned += value; }
+            remove { MediatorListeningState.IDScanned -= value; }
         }
 
         public void Request()
