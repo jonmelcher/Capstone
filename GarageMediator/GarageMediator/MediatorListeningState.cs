@@ -18,14 +18,19 @@ namespace GarageMediator
         public MediatorListeningState(GarageMediator context)
         {
             _isRunning = true;
-            _worker = Task.Run(() =>
+            _worker = Task.Run(GetWorkerAction(context));
+        }
+
+        private Action GetWorkerAction(GarageMediator context)
+        {
+            return () =>
             {
                 while (_isRunning)
                 {
                     ScanID(context.RFIDCommunication.CurrentID);
                     Thread.Sleep(0);
                 }
-            });
+            };
         }
 
         private void ScanID(string id)
