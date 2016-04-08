@@ -14,12 +14,12 @@ using SerialCommunications;
 
 namespace GarageMediator
 {
-    public class GarageMediator
+    public sealed class GarageMediator
     {
-        public GarageRepository DatabaseCommunication { get; private set; }
-        public RS232Server MicroCommunication { get; private set; }
-        public Parallax28140Server RFIDCommunication { get; private set; }
-        public MediatorState State { get; set; }
+        internal GarageRepository DatabaseCommunication { get; private set; }
+        internal RS232Server MicroCommunication { get; private set; }
+        internal Parallax28140Server RFIDCommunication { get; private set; }
+        internal MediatorState State { get; set; }
 
         // constructor - sets up the initial state and servers/database repo without starting
         public GarageMediator()

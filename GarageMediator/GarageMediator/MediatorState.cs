@@ -12,7 +12,7 @@ using System;
 
 namespace GarageMediator
 {
-    public abstract class MediatorState
+    internal abstract class MediatorState
     {
         public abstract void Change(GarageMediator context);
 

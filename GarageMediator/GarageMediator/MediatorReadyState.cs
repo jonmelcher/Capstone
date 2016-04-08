@@ -10,7 +10,7 @@
 
 namespace GarageMediator
 {
-    public class MediatorReadyState : MediatorState
+    internal sealed class MediatorReadyState : MediatorState
     {
         // GarageMediator will request to start the servers, which will be granted
         // and its state moved into the listening state

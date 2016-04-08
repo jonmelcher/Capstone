@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace GarageMediator
 {
-    public class MediatorListeningState : MediatorState
+    internal sealed class MediatorListeningState : MediatorState
     {
         private volatile bool _isRunning;
         private Task _worker;

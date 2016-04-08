@@ -20,7 +20,7 @@ using GarageModel;
 
 namespace GarageMediator
 {
-    public class MediatorProcessingState : MediatorState
+    internal sealed class MediatorProcessingState : MediatorState
     {
         // communication protocol to the microcontroller
         private const byte START_INSTRUCTION = 0xF0;
