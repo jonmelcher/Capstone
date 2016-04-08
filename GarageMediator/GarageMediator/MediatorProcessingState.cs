@@ -19,7 +19,7 @@ namespace GarageMediator
         private const byte INCOMING = 0x21;
 
         private Task _instructor;
-        public event Action VehicleProcessed;
+        public static event Action VehicleProcessed;
         
         public override void Process(GarageAssignment assignment)
         {
