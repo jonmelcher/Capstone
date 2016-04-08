@@ -19,27 +19,39 @@ namespace GarageMediator
         private const byte INCOMING = 0x21;
 
         private Task _instructor;
+        private Action<GarageAssignment> _Process;
+
         public static event Action VehicleProcessed;
+
+        public MediatorProcessingState(GarageMediator context)
+        {
+            _Process = GetProcess(context);
+        }
         
+        private Action<GarageAssignment> GetProcess(GarageMediator context)
+        {
+            return (assignment) =>
+            {
+                context.MicroCommunication.Write(START_INSTRUCTION);
+                while (context.MicroCommunication.Read() != CONTINUE_INSTRUCTION)
+                    Thread.Sleep(0);
+                context.MicroCommunication.Write(assignment.Cell);
+                while (context.MicroCommunication.Read() != CONTINUE_INSTRUCTION)
+                    Thread.Sleep(0);
+                context.MicroCommunication.Write(assignment.Stored ? OUTGOING : INCOMING);
+                while (context.MicroCommunication.Read() != CONTINUE_INSTRUCTION)
+                    Thread.Sleep(0);
+                context.MicroCommunication.Write(STOP_INSTRUCTION);
+                while (context.MicroCommunication.Read() != INSTRUCTIONS_COMPLETED)
+                    Thread.Sleep(0);
+                context.DatabaseCommunication.MoveVehicle(assignment.ID, !assignment.Stored);
+                VehicleProcessed();
+            };
+        }
+
         public override void Process(GarageAssignment assignment)
         {
-            _instructor = Task.Run(() =>
-            {
-                MicroCommunication.Write(START_INSTRUCTION);
-                while (MicroCommunication.Read() != CONTINUE_INSTRUCTION)
-                    Thread.Sleep(0);
-                MicroCommunication.Write(assignment.Cell);
-                while (MicroCommunication.Read() != CONTINUE_INSTRUCTION)
-                    Thread.Sleep(0);
-                MicroCommunication.Write(assignment.Stored ? OUTGOING : INCOMING);
-                while (MicroCommunication.Read() != CONTINUE_INSTRUCTION)
-                    Thread.Sleep(0);
-                MicroCommunication.Write(STOP_INSTRUCTION);
-                while (MicroCommunication.Read() != INSTRUCTIONS_COMPLETED)
-                    Thread.Sleep(0);
-                DatabaseCommunication.MoveVehicle(assignment.ID, !assignment.Stored);
-                VehicleProcessed();
-            });
+            _instructor = Task.Run(() => _Process(assignment));
         }
 
         public override void Kill(GarageMediator context)
@@ -50,7 +62,7 @@ namespace GarageMediator
 
         public override void Change(GarageMediator context)
         {
-            context.State = new MediatorListeningState();
+            context.State = new MediatorListeningState(context);
         }
     }
 }
