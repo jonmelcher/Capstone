@@ -50,6 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GarageMediator.cs" />
+    <Compile Include="MediatorKilledState.cs" />
+    <Compile Include="MediatorState.cs" />
+    <Compile Include="MediatorListeningState.cs" />
+    <Compile Include="MediatorProcessingState.cs" />
+    <Compile Include="MediatorReadyState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
