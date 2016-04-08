@@ -16,7 +16,7 @@ namespace GarageMediator
     {
         public abstract void Change(GarageMediator context);
 
-        public virtual void Process(GarageAssignment assignment)
+        public virtual void ProcessVehicle(GarageAssignment assignment)
         {
             throw new InvalidOperationException();
         }

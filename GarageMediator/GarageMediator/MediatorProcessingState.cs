@@ -65,7 +65,7 @@ namespace GarageMediator
             };
         }
 
-        public override void Process(GarageAssignment assignment)
+        public override void ProcessVehicle(GarageAssignment assignment)
         {
             _instructor?.Wait();
             _instructor = Task.Run(() => _Process(assignment));
