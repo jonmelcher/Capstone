@@ -1,4 +1,10 @@
-﻿
+﻿// *************************************************************************
+//  filename    :   MediatorState.cs
+//  purpose     :   abstract base for the different states of GarageMediator
+//
+//  written by Jonathan Melcher and Brennan MacGregor on 2016-04-07
+// *************************************************************************
+
 
 using GarageModel;
 using System;
