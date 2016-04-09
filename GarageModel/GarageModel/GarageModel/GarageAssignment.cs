@@ -31,7 +31,7 @@ namespace GarageModel
 
         public override string ToString()
         {
-            return $"ID: {ID}, Stored: {Stored}, Cell: {Cell}";
+            return $"ID: {ID}\nStored: {Stored}\nCell: {Cell}";
         }
     }
 }

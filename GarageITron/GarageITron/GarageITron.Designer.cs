@@ -30,13 +30,15 @@
         {
             this.garageMenuUI = new System.Windows.Forms.TabControl();
             this.garageMenu1 = new System.Windows.Forms.TabPage();
-            this.garageMenu2 = new System.Windows.Forms.TabPage();
-            this.addCarUI = new System.Windows.Forms.Button();
-            this.removeCarUI = new System.Windows.Forms.Button();
-            this.systemStatusUI = new System.Windows.Forms.Label();
-            this.garagePopulationUI = new System.Windows.Forms.Label();
+            this.killServersUI = new System.Windows.Forms.Button();
+            this.startServersUI = new System.Windows.Forms.Button();
             this.vehicleProcessStatusUI = new System.Windows.Forms.ListBox();
+            this.garagePopulationUI = new System.Windows.Forms.Label();
+            this.systemStatusUI = new System.Windows.Forms.Label();
+            this.processVehicleUI = new System.Windows.Forms.Button();
+            this.garageMenu2 = new System.Windows.Forms.TabPage();
             this.vehicleInformationUI = new System.Windows.Forms.ListBox();
+            this.rescanUI = new System.Windows.Forms.Button();
             this.garageMenuUI.SuspendLayout();
             this.garageMenu1.SuspendLayout();
             this.garageMenu2.SuspendLayout();
@@ -54,11 +56,13 @@
             // 
             // garageMenu1
             // 
+            this.garageMenu1.Controls.Add(this.rescanUI);
+            this.garageMenu1.Controls.Add(this.killServersUI);
+            this.garageMenu1.Controls.Add(this.startServersUI);
             this.garageMenu1.Controls.Add(this.vehicleProcessStatusUI);
             this.garageMenu1.Controls.Add(this.garagePopulationUI);
             this.garageMenu1.Controls.Add(this.systemStatusUI);
-            this.garageMenu1.Controls.Add(this.removeCarUI);
-            this.garageMenu1.Controls.Add(this.addCarUI);
+            this.garageMenu1.Controls.Add(this.processVehicleUI);
             this.garageMenu1.Location = new System.Drawing.Point(4, 22);
             this.garageMenu1.Name = "garageMenu1";
             this.garageMenu1.Padding = new System.Windows.Forms.Padding(3);
@@ -67,36 +71,46 @@
             this.garageMenu1.Text = "Garage Controls";
             this.garageMenu1.UseVisualStyleBackColor = true;
             // 
-            // garageMenu2
+            // killServersUI
             // 
-            this.garageMenu2.Controls.Add(this.vehicleInformationUI);
-            this.garageMenu2.Location = new System.Drawing.Point(4, 22);
-            this.garageMenu2.Name = "garageMenu2";
-            this.garageMenu2.Padding = new System.Windows.Forms.Padding(3);
-            this.garageMenu2.Size = new System.Drawing.Size(252, 211);
-            this.garageMenu2.TabIndex = 1;
-            this.garageMenu2.Text = "Scanned Vehicle Information";
-            this.garageMenu2.UseVisualStyleBackColor = true;
+            this.killServersUI.Enabled = false;
+            this.killServersUI.Location = new System.Drawing.Point(130, 6);
+            this.killServersUI.Name = "killServersUI";
+            this.killServersUI.Size = new System.Drawing.Size(116, 23);
+            this.killServersUI.TabIndex = 6;
+            this.killServersUI.Text = "Kill Servers";
+            this.killServersUI.UseVisualStyleBackColor = true;
+            this.killServersUI.Click += new System.EventHandler(this.killServersUI_Click);
             // 
-            // addCarUI
+            // startServersUI
             // 
-            this.addCarUI.Enabled = false;
-            this.addCarUI.Location = new System.Drawing.Point(6, 6);
-            this.addCarUI.Name = "addCarUI";
-            this.addCarUI.Size = new System.Drawing.Size(116, 23);
-            this.addCarUI.TabIndex = 0;
-            this.addCarUI.Text = "Enter Garage!";
-            this.addCarUI.UseVisualStyleBackColor = true;
+            this.startServersUI.Location = new System.Drawing.Point(6, 6);
+            this.startServersUI.Name = "startServersUI";
+            this.startServersUI.Size = new System.Drawing.Size(116, 23);
+            this.startServersUI.TabIndex = 5;
+            this.startServersUI.Text = "Start Servers";
+            this.startServersUI.UseVisualStyleBackColor = true;
+            this.startServersUI.Click += new System.EventHandler(this.startServersUI_Click);
             // 
-            // removeCarUI
+            // vehicleProcessStatusUI
             // 
-            this.removeCarUI.Enabled = false;
-            this.removeCarUI.Location = new System.Drawing.Point(130, 6);
-            this.removeCarUI.Name = "removeCarUI";
-            this.removeCarUI.Size = new System.Drawing.Size(116, 23);
-            this.removeCarUI.TabIndex = 1;
-            this.removeCarUI.Text = "Leave Garage!";
-            this.removeCarUI.UseVisualStyleBackColor = true;
+            this.vehicleProcessStatusUI.FormattingEnabled = true;
+            this.vehicleProcessStatusUI.Location = new System.Drawing.Point(6, 96);
+            this.vehicleProcessStatusUI.Name = "vehicleProcessStatusUI";
+            this.vehicleProcessStatusUI.Size = new System.Drawing.Size(240, 108);
+            this.vehicleProcessStatusUI.TabIndex = 4;
+            // 
+            // garagePopulationUI
+            // 
+            this.garagePopulationUI.AutoSize = true;
+            this.garagePopulationUI.Location = new System.Drawing.Point(6, 45);
+            this.garagePopulationUI.MaximumSize = new System.Drawing.Size(240, 13);
+            this.garagePopulationUI.MinimumSize = new System.Drawing.Size(240, 13);
+            this.garagePopulationUI.Name = "garagePopulationUI";
+            this.garagePopulationUI.Size = new System.Drawing.Size(240, 13);
+            this.garagePopulationUI.TabIndex = 3;
+            this.garagePopulationUI.Text = "Garage Population: _ / 23";
+            this.garagePopulationUI.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // systemStatusUI
             // 
@@ -110,25 +124,26 @@
             this.systemStatusUI.Text = "System Status";
             this.systemStatusUI.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // garagePopulationUI
+            // processVehicleUI
             // 
-            this.garagePopulationUI.AutoSize = true;
-            this.garagePopulationUI.Location = new System.Drawing.Point(6, 45);
-            this.garagePopulationUI.MaximumSize = new System.Drawing.Size(240, 13);
-            this.garagePopulationUI.MinimumSize = new System.Drawing.Size(240, 13);
-            this.garagePopulationUI.Name = "garagePopulationUI";
-            this.garagePopulationUI.Size = new System.Drawing.Size(240, 13);
-            this.garagePopulationUI.TabIndex = 3;
-            this.garagePopulationUI.Text = "Garage Population: 0 / 23";
-            this.garagePopulationUI.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.processVehicleUI.Enabled = false;
+            this.processVehicleUI.Location = new System.Drawing.Point(6, 61);
+            this.processVehicleUI.Name = "processVehicleUI";
+            this.processVehicleUI.Size = new System.Drawing.Size(116, 23);
+            this.processVehicleUI.TabIndex = 0;
+            this.processVehicleUI.Text = "Process!";
+            this.processVehicleUI.UseVisualStyleBackColor = true;
             // 
-            // vehicleProcessStatusUI
+            // garageMenu2
             // 
-            this.vehicleProcessStatusUI.FormattingEnabled = true;
-            this.vehicleProcessStatusUI.Location = new System.Drawing.Point(9, 70);
-            this.vehicleProcessStatusUI.Name = "vehicleProcessStatusUI";
-            this.vehicleProcessStatusUI.Size = new System.Drawing.Size(237, 134);
-            this.vehicleProcessStatusUI.TabIndex = 4;
+            this.garageMenu2.Controls.Add(this.vehicleInformationUI);
+            this.garageMenu2.Location = new System.Drawing.Point(4, 22);
+            this.garageMenu2.Name = "garageMenu2";
+            this.garageMenu2.Padding = new System.Windows.Forms.Padding(3);
+            this.garageMenu2.Size = new System.Drawing.Size(252, 211);
+            this.garageMenu2.TabIndex = 1;
+            this.garageMenu2.Text = "Scanned Vehicle Information";
+            this.garageMenu2.UseVisualStyleBackColor = true;
             // 
             // vehicleInformationUI
             // 
@@ -137,6 +152,17 @@
             this.vehicleInformationUI.Name = "vehicleInformationUI";
             this.vehicleInformationUI.Size = new System.Drawing.Size(240, 186);
             this.vehicleInformationUI.TabIndex = 0;
+            // 
+            // rescanUI
+            // 
+            this.rescanUI.Enabled = false;
+            this.rescanUI.Location = new System.Drawing.Point(130, 61);
+            this.rescanUI.Name = "rescanUI";
+            this.rescanUI.Size = new System.Drawing.Size(116, 23);
+            this.rescanUI.TabIndex = 7;
+            this.rescanUI.Text = "Rescan!";
+            this.rescanUI.UseVisualStyleBackColor = true;
+            this.rescanUI.Click += new System.EventHandler(this.rescanUI_Click);
             // 
             // GarageITron
             // 
@@ -148,6 +174,7 @@
             this.MinimumSize = new System.Drawing.Size(300, 300);
             this.Name = "GarageITron";
             this.Text = "Garage-ITron v1.1";
+            this.Load += new System.EventHandler(this.GarageITron_Load);
             this.garageMenuUI.ResumeLayout(false);
             this.garageMenu1.ResumeLayout(false);
             this.garageMenu1.PerformLayout();
@@ -163,10 +190,12 @@
         private System.Windows.Forms.ListBox vehicleProcessStatusUI;
         private System.Windows.Forms.Label garagePopulationUI;
         private System.Windows.Forms.Label systemStatusUI;
-        private System.Windows.Forms.Button removeCarUI;
-        private System.Windows.Forms.Button addCarUI;
+        private System.Windows.Forms.Button processVehicleUI;
         private System.Windows.Forms.TabPage garageMenu2;
         private System.Windows.Forms.ListBox vehicleInformationUI;
+        private System.Windows.Forms.Button killServersUI;
+        private System.Windows.Forms.Button startServersUI;
+        private System.Windows.Forms.Button rescanUI;
     }
 }
 

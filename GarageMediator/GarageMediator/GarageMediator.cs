@@ -34,6 +34,17 @@ namespace GarageMediator
             State = new MediatorReadyState();
         }
 
+        public string GetStatus()
+        {
+            if (State is MediatorKilledState)
+                return "Disconnected.";
+            if (State is MediatorReadyState)
+                return "Ready to Start.";
+            if (State is MediatorListeningState)
+                return "Listening for RFID Tag.";
+            return "Waiting for User Input.";
+        }
+
         // event to propogate upwards when an RFID tag is scanned
         public event Action<object, GarageAssignment, VehicleInformation> IDScanned;
 
@@ -49,6 +60,23 @@ namespace GarageMediator
         public void Request()
         {
             State.Change(this);
+        }
+
+        public void RequestClearID()
+        {
+            if (State is MediatorListeningState)
+                (State as MediatorListeningState).CurrentID = string.Empty;
+        }
+
+        public void RequestProcessVehicle(GarageAssignment assignment)
+        {
+            if (State is MediatorProcessingState)
+                (State as MediatorProcessingState).ProcessVehicle(assignment);
+        }
+
+        public void Kill()
+        {
+            State.Kill(this);
         }
     }
 }

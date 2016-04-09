@@ -28,7 +28,7 @@ namespace GarageModel
 
         public override string ToString()
         {
-            return $"ID: {ID}, Mileage: {Mileage}, ModelYear: {ModelYear}, Make: {Make}, Model: {Model}, Colour: {Colour}\n\n{Notes}";
+            return $"Mileage: {Mileage}\nModelYear: {ModelYear}\nMake: {Make}\nModel: {Model}\nColour: {Colour}\n\n{Notes}";
         }
     }
 }
