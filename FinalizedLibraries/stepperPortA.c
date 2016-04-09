@@ -9,6 +9,8 @@
 
 #include "stepperPortA.h"
 
+
+// directional constants
 static const unsigned char CLOCKWISE = 1;
 static const unsigned char COUNTERCLOCKWISE = 0;
 
