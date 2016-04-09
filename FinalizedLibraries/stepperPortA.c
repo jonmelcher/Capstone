@@ -10,6 +10,15 @@
 #include "stepperPortA.h"
 
 
+// private prototypes
+void stepper_delay(StepperA* motor);
+void stepper_release_torque(StepperA* motor);
+unsigned char stepper_get_optimal_direction(StepperA* motor, unsigned long int position);
+unsigned long int stepper_get_steps(StepperA* motor, unsigned char direction, unsigned long int position);
+void stepper_steps(StepperA* motor, unsigned long int steps);
+void stepper_sync(StepperA* motor);
+
+
 // directional constants
 static const unsigned char CLOCKWISE = 1;
 static const unsigned char COUNTERCLOCKWISE = 0;
