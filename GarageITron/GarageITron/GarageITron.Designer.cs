@@ -133,6 +133,7 @@
             this.processVehicleUI.TabIndex = 0;
             this.processVehicleUI.Text = "Process!";
             this.processVehicleUI.UseVisualStyleBackColor = true;
+            this.processVehicleUI.Click += new System.EventHandler(this.processVehicleUI_Click);
             // 
             // garageMenu2
             // 

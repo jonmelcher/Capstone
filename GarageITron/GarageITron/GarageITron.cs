@@ -16,13 +16,39 @@ namespace GarageITron
     {
         private GarageRepository _repo;
         private GarageMediator.GarageMediator _mediator;
-        
+        private GarageAssignment _scanned;
+
         public GarageITron()
         {
             InitializeComponent();
             _repo = GarageRepository.Instance;
             _mediator = new GarageMediator.GarageMediator();
             _mediator.IDScanned += _mediator_IDScanned;
+            _mediator.VehicleInstructionsStarted += _mediator_VehicleInstructionsStarted;
+            _mediator.VehicleProcessingStarted += _mediator_VehicleProcessingStarted;
+            _mediator.VehicleProcessed += _mediator_VehicleProcessed;
+
+        }
+
+        private void _mediator_VehicleProcessed()
+        {
+            vehicleProcessStatusUI.Items.Add("Garage has finished processing vehicle...");
+            UpdateGaragePopulation();
+            UpdateSystemStatus();
+        }
+
+        private void _mediator_VehicleProcessingStarted()
+        {
+            vehicleProcessStatusUI.Items.Add("Garage has started processing vehicle...");
+            killServersUI.Enabled = true;
+        }
+        
+        private void _mediator_VehicleInstructionsStarted()
+        {
+            vehicleProcessStatusUI.Items.Add("Instructions being sent to Garage...");
+            processVehicleUI.Enabled = false;
+            rescanUI.Enabled = false;
+            killServersUI.Enabled = false;
         }
 
         private void _mediator_IDScanned(object sender, GarageAssignment assignment, VehicleInformation information)
@@ -33,6 +59,7 @@ namespace GarageITron
                 return;
             }
 
+            _scanned = assignment;
             vehicleInformationUI.Items.Clear();
             vehicleInformationUI.Items.AddRange(new object[]
             {
@@ -83,6 +110,7 @@ namespace GarageITron
                 return;
             }
 
+            _scanned = null;
             killServersUI.Enabled = false;
             processVehicleUI.Enabled = false;
             rescanUI.Enabled = false;
@@ -98,7 +126,17 @@ namespace GarageITron
 
         private void rescanUI_Click(object sender, EventArgs e)
         {
+            _scanned = null;
             _mediator.RequestClearID();
+            UpdateSystemStatus();
+        }
+
+        private void processVehicleUI_Click(object sender, EventArgs e)
+        {
+            if (_scanned == null)
+                return;
+            _mediator.RequestProcessVehicle(_scanned);
+            UpdateSystemStatus();
         }
     }
 }

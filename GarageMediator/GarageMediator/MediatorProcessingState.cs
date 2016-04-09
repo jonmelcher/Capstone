@@ -37,6 +37,9 @@ namespace GarageMediator
         private Action<GarageAssignment> _Process;
 
         // event to propogate upwards when a vehicle has finished being processed by the microcontroller
+
+        public static event Action VehicleInstructionsStarted;
+        public static event Action VehicleProcessingStarted;
         public static event Action VehicleProcessed;
 
         public MediatorProcessingState(GarageMediator context)
@@ -49,6 +52,7 @@ namespace GarageMediator
             return (assignment) =>
             {
                 context.MicroCommunication.Write(START_INSTRUCTION);
+                VehicleInstructionsStarted();
                 while (context.MicroCommunication.Read() != CONTINUE_INSTRUCTION)
                     Thread.Sleep(0);
                 context.MicroCommunication.Write(assignment.Cell);
@@ -58,6 +62,7 @@ namespace GarageMediator
                 while (context.MicroCommunication.Read() != CONTINUE_INSTRUCTION)
                     Thread.Sleep(0);
                 context.MicroCommunication.Write(STOP_INSTRUCTION);
+                VehicleProcessingStarted();
                 while (context.MicroCommunication.Read() != INSTRUCTIONS_COMPLETED)
                     Thread.Sleep(0);
                 context.DatabaseCommunication.MoveVehicle(assignment.ID, !assignment.Stored);

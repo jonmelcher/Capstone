@@ -56,6 +56,18 @@ namespace GarageMediator
             remove { MediatorProcessingState.VehicleProcessed -= value; }
         }
 
+        public event Action VehicleInstructionsStarted
+        {
+            add { MediatorProcessingState.VehicleInstructionsStarted += value; }
+            remove { MediatorProcessingState.VehicleInstructionsStarted -= value; }
+        }
+
+        public event Action VehicleProcessingStarted
+        {
+            add { MediatorProcessingState.VehicleProcessingStarted += value; }
+            remove { MediatorProcessingState.VehicleProcessingStarted += value; }
+        }
+
         // request to change state is propogated downwards into the MediatorState
         public void Request()
         {
