@@ -7,8 +7,7 @@
 
 
 static const unsigned char TIERS = 3;
-static const unsigned char INSTRUCTION_READY = 0x33;
-
+static const unsigned char START_INSTRUCTION = 0xF0;
 
 void main(void) {
 
@@ -27,11 +26,7 @@ void main(void) {
 
     for(;;) {
 
-        if (!is_garage_rx_ready())
-            continue;
-        
-        rx = garage_rx();
-        if (rx != INSTRUCTION_READY)
+        if (!is_garage_rx_ready() || garage_rx() != START_INSTRUCTION)
             continue;
 
         get_instruction(&instruction);

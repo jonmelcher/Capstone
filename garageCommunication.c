@@ -14,7 +14,7 @@ static const unsigned char TX_EMPTY_MASK = 0x80;
 
 
 void garage_communication_init(void) {
-    SCI0BD = 26;               // sets baud-rate to 19200
+    SCI0BD = 26;                                    // sets baud-rate to 19200
     SCI0CR1 = 0;                                    // wait-mode enabled, no loopback, 8-bit data
     SCI0CR2 = 0x0C;                                 // wake-up on start, no parity checking, TX/RX enabled, no interrupts
 }

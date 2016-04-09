@@ -11,8 +11,8 @@
 #include "linearActuatorVerticalPortA.h"
 #include "linearActuatorHorizontalPortK.h"
 #include "stepperPortA.h"
-#include "garage.h"
 #include "garageCommunication.h"
+#include "garage.h"
 
 
 static const unsigned char HOME = 0;
@@ -21,14 +21,12 @@ static const unsigned long int DEGREES_BETWEEN_CELLS = 45;
 static const unsigned char OUTGOING = 0x20;
 static const unsigned char INCOMING = 0x21;
 static const unsigned long long int DELAY_BETWEEN_MOVEMENTS_MS = 1000;
-static const unsigned char START_INSTRUCTION = 0xF0;
 static const unsigned char CONTINUE_INSTRUCTION = 0xF1;
 static const unsigned char STOP_INSTRUCTION = 0xF2;
 static const unsigned char INSTRUCTIONS_COMPLETED = 0xF3;
 
+
 void get_instruction(Instruction* ins) {
-    
-    while (garage_rx() != START_INSTRUCTION);
     garage_tx(CONTINUE_INSTRUCTION);
     ins->cell = garage_rx();
     garage_tx(CONTINUE_INSTRUCTION);
