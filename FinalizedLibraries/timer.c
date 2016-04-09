@@ -10,7 +10,6 @@
 #include "timer.h"
 
 
-
 void timer_init_8us(void) {
     TSCR1 |= 0x80;      // enable timer module
     TSCR2 &= 0xF8;      // set prescale to Bus/64 (8 us)
