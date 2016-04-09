@@ -26,6 +26,13 @@ static const unsigned char STOP_INSTRUCTION = 0xF2;
 static const unsigned char INSTRUCTIONS_COMPLETED = 0xF3;
 
 
+// private prototypes
+void automation_process(StepperA* motor, VerticalActuatorA* va, HorizontalActuatorK* ha, Instruction* ins);
+void move_to_cell(StepperA* motor, VerticalActuatorA* va, unsigned char cell);
+void pickup_car_from_cell(VerticalActuatorA* va, HorizontalActuatorK* ha);
+void dropoff_car_in_cell(VerticalActuatorA* va, HorizontalActuatorK* ha);
+
+
 void get_instruction(Instruction* ins) {
     garage_tx(CONTINUE_INSTRUCTION);
     ins->cell = garage_rx();
