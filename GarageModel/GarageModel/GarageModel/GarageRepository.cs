@@ -30,6 +30,32 @@ namespace GarageModel
             }
         }
 
+        public int GetGaragePopulation()
+        {
+            using (var connection = new SqlConnection(DataSource.ConnectionString))
+            using (var command = new SqlCommand())
+            {
+                command.CommandText = "GetPopulation";
+                command.Connection = connection;
+                command.CommandType = CommandType.StoredProcedure;
+                
+                try
+                {
+                    connection.Open();
+                    var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
+                    if (!reader.HasRows)
+                        return -1;
+
+                    reader.Read();
+                    return (int)reader[VehicleStatisticHeaders.Population.ToString()];
+                }
+                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
+            }
+
+            return -1;
+        }
+
+
         public VehicleInformation GetVehicleInformation(string id)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
@@ -149,5 +175,6 @@ namespace GarageModel
         // headers for Vehicles Table in Garage Database
         private enum VehiclesHeaders { VehicleID, Stored, Cell }
         private enum VehicleInfoHeaders { VehicleID, Mileage, ModelYear, Make, Model, Colour, Notes }
+        private enum VehicleStatisticHeaders { Population }
     }
 }

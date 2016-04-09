@@ -101,9 +101,26 @@ if exists
 drop procedure MoveVehicle
 go
 
+if exists
+(
+	select	[name]
+	from	jmelcher1.dbo.sysobjects
+	where	[name] = 'GetPopulation'
+)
+drop procedure GetPopulation
+go
+
+
 -- now create procedures
 
-CREATE PROC InsertVehicle
+CREATE PROCEDURE GetPopulation
+AS
+	SELECT COUNT(VehicleID) as 'Population'
+	FROM Vehicles
+	WHERE Stored = 1
+GO
+
+CREATE PROCEDURE InsertVehicle
 	@id char(10),
 	@stored bit,
 	@cell tinyint,
@@ -211,30 +228,30 @@ GO
 
 -- populate vehicles table
 
-EXECUTE InsertVehicle '88002A0637', false, 1
-EXECUTE InsertVehicle '530020D5D5', false, 2
-EXECUTE InsertVehicle '88002A607D', false, 3
-EXECUTE InsertVehicle '88002C3EEE', false, 4
-EXECUTE InsertVehicle '8800299F6C', false, 5
-EXECUTE InsertVehicle '530020CDF4', false, 6
-EXECUTE InsertVehicle '8800298698', false, 7
+EXECUTE InsertVehicle '88002A0637', 0, 1
+EXECUTE InsertVehicle '530020D5D5', 0, 2
+EXECUTE InsertVehicle '88002A607D', 0, 3
+EXECUTE InsertVehicle '88002C3EEE', 0, 4
+EXECUTE InsertVehicle '8800299F6C', 0, 5
+EXECUTE InsertVehicle '530020CDF4', 0, 6
+EXECUTE InsertVehicle '8800298698', 0, 7
 
-EXECUTE InsertVehicle '88002A5318', false, 8
-EXECUTE InsertVehicle '88002E3F2E', false, 9
-EXECUTE InsertVehicle '39009D3D68', false, 10
-EXECUTE InsertVehicle '88002A014F', false, 11
-EXECUTE InsertVehicle '39009D6EBF', false, 12
-EXECUTE InsertVehicle '88002AF110', false, 13
-EXECUTE InsertVehicle '530020737E', false, 14
-EXECUTE InsertVehicle '39009D6E90', false, 15
+EXECUTE InsertVehicle '88002A5318', 0, 8
+EXECUTE InsertVehicle '88002E3F2E', 0, 9
+EXECUTE InsertVehicle '39009D3D68', 0, 10
+EXECUTE InsertVehicle '88002A014F', 0, 11
+EXECUTE InsertVehicle '39009D6EBF', 0, 12
+EXECUTE InsertVehicle '88002AF110', 0, 13
+EXECUTE InsertVehicle '530020737E', 0, 14
+EXECUTE InsertVehicle '39009D6E90', 0, 15
 
-EXECUTE InsertVehicle '88002C44F1', false, 16
-EXECUTE InsertVehicle '53001FDA0B', false, 17
-EXECUTE InsertVehicle '53001FD9FD', false, 18
-EXECUTE InsertVehicle '88002A06DC', false, 19
-EXECUTE InsertVehicle '39009D6FB0', false, 20
-EXECUTE InsertVehicle '88002AE935', false, 21
-EXECUTE InsertVehicle '5300207370', false, 22
-EXECUTE InsertVehicle '8800298192', false, 23
+EXECUTE InsertVehicle '88002C44F1', 0, 16
+EXECUTE InsertVehicle '53001FDA0B', 0, 17
+EXECUTE InsertVehicle '53001FD9FD', 0, 18
+EXECUTE InsertVehicle '88002A06DC', 0, 19
+EXECUTE InsertVehicle '39009D6FB0', 0, 20
+EXECUTE InsertVehicle '88002AE935', 0, 21
+EXECUTE InsertVehicle '5300207370', 0, 22
+EXECUTE InsertVehicle '8800298192', 0, 23
 
 GO
