@@ -25,10 +25,8 @@ typedef struct LinearActuatorHorizontalPortK {
 } HorizontalActuatorK;
 
 void horizontal_actuator_init(HorizontalActuatorK* a);
-void horizontal_actuator_sync(HorizontalActuatorK* a);
-void horizontal_actuator_disable(HorizontalActuatorK* a);
-void horizontal_actuator_actuate(HorizontalActuatorK* a, unsigned char directionFlag, unsigned long long int ms);
 void horizontal_actuator_retract(HorizontalActuatorK* a);
 void horizontal_actuator_extend(HorizontalActuatorK* a);
+void horizontal_actuator_home(HorizontalActuatorK* a);
 
 #endif

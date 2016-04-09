@@ -11,6 +11,12 @@
 #include "linearActuatorHorizontalPortK.h"
 
 
+// private prototypes
+void horizontal_actuator_sync(HorizontalActuatorK* a);
+void horizontal_actuator_disable(HorizontalActuatorK* a);
+void horizontal_actuator_actuate(HorizontalActuatorK* a, unsigned char directionFlag, unsigned long long int ms);
+
+
 // PIN 19 - POWER (ON / OFF)
 // PIN 20 - DIRECTION (EXTENDING / RETRACTING)
 // inverse of horizontal actuator bits
@@ -29,7 +35,6 @@ static const unsigned long long int ACTUATION_INTERVAL_MS = 26000;
 // amount of time in milliseconds to delay after disabling actuator
 static const unsigned long long int STOP_DELAY_MS = 1000;
 
-// function (HorizontalActuatorK*) -> void
 // initializes PORTK and state of actuator to be off and retracting
 // ensure that the real-life counterpart is fully retracted at this point!
 void horizontal_actuator_init(HorizontalActuatorK* a) {
@@ -40,8 +45,29 @@ void horizontal_actuator_init(HorizontalActuatorK* a) {
     horizontal_actuator_sync(a);
 }
 
-// function (HorizontalActuatorK*) -> void
-// synchronizes PORTK with current state of struct
+// fully retracts actuator if extended
+void horizontal_actuator_retract(HorizontalActuatorK* a) {
+    if (!a->isExtended)
+        return;
+    horizontal_actuator_actuate(a, 0, ACTUATION_INTERVAL_MS);
+    a->isExtended = 0;
+}
+
+// fully extends actuator if retracted
+void horizontal_actuator_extend(HorizontalActuatorK* a) {
+    if (a->isExtended)
+        return;
+    horizontal_actuator_actuate(a, HORIZONTAL_ACTUATOR_EXTENDING_FLAG, ACTUATION_INTERVAL_MS);
+    a->isExtended = 1;
+}
+
+// fully retracts actuator and guarantees to be at stop limit
+void horizontal_actuator_home(HorizontalActuatorK* a) {
+    horizontal_actuator_actuate(a, 0, (ACTUATION_INTERVAL_MS * 3) >> 1);
+    a->isExtended = 0;
+}
+
+// (private) synchronizes PORTK with current state of struct
 void horizontal_actuator_sync(HorizontalActuatorK* a) {
     unsigned char currentState = PORTK;             // get copy of PORTK contents
     currentState &= HORIZONTAL_ACTUATOR_MASK;       // remove bits 5, 4
@@ -49,16 +75,14 @@ void horizontal_actuator_sync(HorizontalActuatorK* a) {
     PORTK = currentState;                           // update PORTK
 }
 
-// function (HorizontalActuatorK*) -> void
-// turns off actuator
+// (private) turns off actuator
 void horizontal_actuator_disable(HorizontalActuatorK* a) {
     a->isOn = 0;
     horizontal_actuator_sync(a);
     timer_delay_ms(STOP_DELAY_MS);                  // delay after stopping before continuing
 }
 
-// function (HorizontalActuatorK*, unsigned char, unsigned long long int) -> void
-// actuates actuator in desired direction for the desired time
+// (private) actuates actuator in desired direction for the desired time
 void horizontal_actuator_actuate(HorizontalActuatorK* a, unsigned char directionFlag, unsigned long long int ms)
 {
     // set up future actuation state for actuator and synchronize
@@ -71,26 +95,4 @@ void horizontal_actuator_actuate(HorizontalActuatorK* a, unsigned char direction
 
     // stop
     horizontal_actuator_disable(a); 
-}
-
-// function (HorizontalActuatorK*) -> void
-// fully retracts actuator if extended
-void horizontal_actuator_retract(HorizontalActuatorK* a) {
-
-    if (!a->isExtended)
-        return;
-
-    horizontal_actuator_actuate(a, 0, ACTUATION_INTERVAL_MS);
-    a->isExtended = 0;
-}
-
-// function (HorizontalActuatorK*) -> void
-// fully extends actuator if retracted
-void horizontal_actuator_extend(HorizontalActuatorK* a) {
-
-    if (a->isExtended)
-        return;
-
-    horizontal_actuator_actuate(a, HORIZONTAL_ACTUATOR_EXTENDING_FLAG, ACTUATION_INTERVAL_MS);
-    a->isExtended = 1;
 }

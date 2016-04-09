@@ -10,6 +10,15 @@
 #include "timer.h"
 #include "linearActuatorVerticalPortA.h"
 
+
+// private prototypes
+void vertical_actuator_sync(VerticalActuatorA* a);
+void vertical_actuator_disable(VerticalActuatorA* a);
+void vertical_actuator_drop(VerticalActuatorA* a);
+void vertical_actuator_lift(VerticalActuatorA* a);
+void vertical_actuator_actuate(VerticalActuatorA* a, unsigned char actuationFlag, unsigned long long int ms);
+
+
 // PIN 60 - POWER (ON / OFF)
 // PIN 59 - DIRECTION (EXTENDING / RETRACTING)
 // inverse of actuator bits
@@ -30,7 +39,6 @@ static const unsigned long long int TIER_INTERVAL_MS = 18750;
 // amount of time in milliseconds to delay after disabling actuator
 static const unsigned long long int STOP_DELAY_MS = 1000;
 
-// function (VerticalActuatorA*, unsigned char) -> void
 // initializes DDRA / PORTA and state of actuator to be fully retracted and off (make sure this reflects real life)
 void vertical_actuator_init(VerticalActuatorA* a, unsigned char maxTier) {
     a->maxTier = maxTier;
@@ -42,7 +50,6 @@ void vertical_actuator_init(VerticalActuatorA* a, unsigned char maxTier) {
     vertical_actuator_sync(a);
 }
 
-// function (VerticalActuatorA*) -> void
 // synchronizes PORTA with current state of struct
 void vertical_actuator_sync(VerticalActuatorA* a) {
     unsigned char currentState = PORTA;             // get copy of PORTA contents
@@ -51,7 +58,6 @@ void vertical_actuator_sync(VerticalActuatorA* a) {
     PORTA = currentState;                           // update PORTA
 }
 
-// function (VerticalActuatorA*) -> void
 // turns off actuator
 void vertical_actuator_disable(VerticalActuatorA* a) {
     a->isOn = 0;
@@ -59,7 +65,6 @@ void vertical_actuator_disable(VerticalActuatorA* a) {
     timer_delay_ms(STOP_DELAY_MS);
 }
 
-// function (VerticalActuatorA*) -> void
 // actuates into bottom of cell and brings to OFF position
 void vertical_actuator_drop(VerticalActuatorA* a) {
     if (a->isDropped)
@@ -68,7 +73,6 @@ void vertical_actuator_drop(VerticalActuatorA* a) {
     a->isDropped = 1;
 }
 
-// function (VerticalActuatorA*) -> void
 // actuates into center of cell and brings to OFF position
 void vertical_actuator_lift(VerticalActuatorA* a) {
     if (!a->isDropped)
@@ -77,7 +81,6 @@ void vertical_actuator_lift(VerticalActuatorA* a) {
     a->isDropped = 0;
 }
 
-// function (VerticalActuatorA*, unsigned char, unsigned long long int) -> void
 // actuates in the desired direction for the desired amount of milliseconds then brings to an OFF position
 void vertical_actuator_actuate(VerticalActuatorA* a, unsigned char actuationFlag, unsigned long long int ms) {
 
@@ -93,7 +96,6 @@ void vertical_actuator_actuate(VerticalActuatorA* a, unsigned char actuationFlag
     vertical_actuator_disable(a);
 }
 
-// function (VerticalActuatorA*, unsigned char) -> void
 // actuates to next tier and brings to OFF position - will be in center of tier at end
 void vertical_actuator_transition_tier(VerticalActuatorA* a, unsigned char nextTier) {
 
@@ -116,7 +118,6 @@ void vertical_actuator_transition_tier(VerticalActuatorA* a, unsigned char nextT
     a->tier = nextTier;
 }
 
-// function (VerticalActuatorA*) -> void
 // ensure that actuator is completely retracted by delaying longer
 void vertical_actuator_home(VerticalActuatorA* a) {
     vertical_actuator_actuate(a, 0, TIER_INTERVAL_MS << 2);
