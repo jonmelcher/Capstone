@@ -12,27 +12,25 @@ using SerialCommunications;
 
 namespace RFIDTest
 {
-    class RFIDTest
+    internal class RFIDTest
     {
         static void Main(string[] args)
         {
-            Parallax28140Server server = SerialPortServerFactory.CreateServer(
-                SerialPortServerFactory.SerialPortServerType.Parallax28140) as Parallax28140Server;
+            Parallax28140Server server = Parallax28140ServerFactory.Instance.CreateServer() as Parallax28140Server;
 
             Console.Write("Press any key to start server... ");
             Console.ReadKey();
             server.StartServer();
 
-
             while (true)
             {
-                if (server.CurrentScan != string.Empty)
-                {
-                    Console.WriteLine(server.CurrentScan);
-                    Console.Write("Press 's' to scan again... ");
-                    if (Console.ReadKey().Key == ConsoleKey.S)
-                        server.ClearTransmission();
-                }
+                if (server.CurrentID == string.Empty)
+                    continue;
+                
+                Console.WriteLine(server.CurrentID);
+                Console.Write("Press 's' to scan again... ");
+                if (Console.ReadKey().Key == ConsoleKey.S)
+                    server.ClearScanner();
             }
         }
     }

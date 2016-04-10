@@ -43,13 +43,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ISerialPortServerFactory.cs" />
+    <Compile Include="Parallax28140ServerFactory.cs" />
     <Compile Include="RFIDScanner.cs" />
     <Compile Include="Parallax28140Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RS232Server.cs" />
-    <Compile Include="SerialPortBuilder.cs" />
+    <Compile Include="RS232ServerFactory.cs" />
     <Compile Include="SerialPortServer.cs" />
-    <Compile Include="SerialPortServerFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

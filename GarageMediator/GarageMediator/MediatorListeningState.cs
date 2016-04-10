@@ -27,24 +27,24 @@ namespace GarageMediator
         public static event Action<object, string> IDScanned;
 
         // current ID being scanned to guard against multiple scans of the same tag
-        public string CurrentID { get; set; }
+        internal string CurrentID { get; set; }
 
         // constructor - sets up _worker task using context
-        public MediatorListeningState(GarageMediator context)
+        internal MediatorListeningState(GarageMediator context)
         {
             _isRunning = true;
             CurrentID = string.Empty;
             _worker = Task.Run(GetWorkerAction(context));
         }
 
-        public override void Change(GarageMediator context)
+        internal override void Change(GarageMediator context)
         {
             _isRunning = false;
             _worker.Wait();
             context.State = new MediatorProcessingState(context);
         }
 
-        public override void Kill(GarageMediator context)
+        internal override void Kill(GarageMediator context)
         {
             _isRunning = false;
             _worker.Wait();

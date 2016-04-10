@@ -9,7 +9,7 @@
 
 namespace GarageModel
 {
-    public class GarageAssignment
+    public sealed class GarageAssignment
     {
         private readonly string _id;
         private readonly byte _cell;

@@ -25,10 +25,8 @@ namespace GarageMediator
         public GarageMediator()
         {
             DatabaseCommunication = GarageRepository.Instance;
-            MicroCommunication = SerialPortServerFactory.CreateServer(
-                SerialPortServerFactory.SerialPortServerType.RS232) as RS232Server;
-            RFIDCommunication = SerialPortServerFactory.CreateServer(
-                SerialPortServerFactory.SerialPortServerType.Parallax28140) as Parallax28140Server;
+            MicroCommunication = RS232ServerFactory.Instance.CreateServer() as RS232Server;
+            RFIDCommunication = Parallax28140ServerFactory.Instance.CreateServer() as Parallax28140Server;
             MediatorListeningState.IDScanned += (sender, id) => IDScanned(sender, DatabaseCommunication.GetGarageAssignment(id),
                                                                                DatabaseCommunication.GetVehicleInformation(id));
             State = new MediatorReadyState();
@@ -96,11 +94,8 @@ namespace GarageMediator
             if (!(State is MediatorKilledState))
                 return;
 
-            MicroCommunication = SerialPortServerFactory.CreateServer(
-                SerialPortServerFactory.SerialPortServerType.RS232) as RS232Server;
-            RFIDCommunication = SerialPortServerFactory.CreateServer(
-                SerialPortServerFactory.SerialPortServerType.Parallax28140) as Parallax28140Server;
-
+            MicroCommunication = RS232ServerFactory.Instance.CreateServer() as RS232Server;
+            RFIDCommunication = Parallax28140ServerFactory.Instance.CreateServer() as Parallax28140Server;
             Request();
         }
     }

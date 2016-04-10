@@ -12,9 +12,11 @@ namespace GarageMediator
 {
     internal sealed class MediatorReadyState : MediatorState
     {
+        internal MediatorReadyState() { }
+
         // GarageMediator will request to start the servers, which will be granted
         // and its state moved into the listening state
-        public override void Change(GarageMediator context)
+        internal override void Change(GarageMediator context)
         {
             context.MicroCommunication.StartServer();
             context.RFIDCommunication.StartServer();

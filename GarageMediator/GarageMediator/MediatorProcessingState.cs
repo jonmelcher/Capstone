@@ -42,7 +42,7 @@ namespace GarageMediator
         public static event Action VehicleProcessingStarted;
         public static event Action VehicleProcessed;
 
-        public MediatorProcessingState(GarageMediator context)
+        internal MediatorProcessingState(GarageMediator context)
         {
             _Process = GetProcess(context);
         }
@@ -71,19 +71,19 @@ namespace GarageMediator
             };
         }
 
-        public override void ProcessVehicle(GarageAssignment assignment)
+        internal override void ProcessVehicle(GarageAssignment assignment)
         {
             _instructor?.Wait();
             _instructor = Task.Run(() => _Process(assignment));
         }
 
-        public override void Kill(GarageMediator context)
+        internal override void Kill(GarageMediator context)
         {
             _instructor?.Wait();
             base.Kill(context);
         }
 
-        public override void Change(GarageMediator context)
+        internal override void Change(GarageMediator context)
         {
             _instructor?.Wait();
             context.State = new MediatorListeningState(context);

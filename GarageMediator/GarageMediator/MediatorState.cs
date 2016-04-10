@@ -14,14 +14,14 @@ namespace GarageMediator
 {
     internal abstract class MediatorState
     {
-        public abstract void Change(GarageMediator context);
+        internal abstract void Change(GarageMediator context);
 
-        public virtual void ProcessVehicle(GarageAssignment assignment)
+        internal virtual void ProcessVehicle(GarageAssignment assignment)
         {
             throw new InvalidOperationException();
         }
 
-        public virtual void Kill(GarageMediator context)
+        internal virtual void Kill(GarageMediator context)
         {
             context.MicroCommunication.StopServer();
             context.RFIDCommunication.StopServer();

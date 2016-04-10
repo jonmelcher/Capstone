@@ -9,17 +9,18 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SerialPortCommunications;
+using SerialCommunications;
 
 
 namespace RS232Test
 {
-    class RS232Test
+    internal class RS232Test
     {
+        private const int DELAY = 500;
+        
         static void Main(string[] args)
         {
-            RS232Server server = SerialPortServerFactory.CreateServer(
-                SerialPortServerFactory.SerialPortServerType.RS232) as RS232Server;
+            RS232Server server = RS232ServerFactory.Instance.CreateServer() as RS232Server;
 
             Console.Write("Press any key to start server... ");
             Console.ReadKey();
@@ -31,7 +32,7 @@ namespace RS232Test
                 while (true)
                 {
                     Console.WriteLine($"Received: {server.Read()}");
-                    Thread.Sleep(500);
+                    Thread.Sleep(DELAY);
                 }
             });
 
@@ -46,7 +47,7 @@ namespace RS232Test
                     if (byte.TryParse(input, out b))
                         server.Write(b);
 
-                    Thread.Sleep(500);
+                    Thread.Sleep(DELAY);
                 }
             });
         }

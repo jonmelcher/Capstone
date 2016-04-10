@@ -5,7 +5,7 @@ using System;
 
 namespace GarageModel
 {
-    public class VehicleInformation
+    public sealed class VehicleInformation
     {
         public string ID { get; private set; }
         public int Mileage { get; set; }

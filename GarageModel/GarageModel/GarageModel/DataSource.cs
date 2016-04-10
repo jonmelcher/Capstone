@@ -16,7 +16,7 @@ namespace GarageModel
     {
         private static string _connectionString;
 
-        public static string ConnectionString
+        internal static string ConnectionString
         {
             get
             {

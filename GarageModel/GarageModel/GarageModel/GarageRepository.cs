@@ -15,7 +15,7 @@ using System.Data.SqlClient;
 
 namespace GarageModel
 {
-    public class GarageRepository
+    public sealed class GarageRepository
     {
         private static GarageRepository _instance;
         private GarageRepository() { }
