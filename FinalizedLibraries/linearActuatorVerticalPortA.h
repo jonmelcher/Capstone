@@ -29,5 +29,7 @@ typedef struct LinearActuatorVerticalPortA {
 void vertical_actuator_init(VerticalActuatorA* a, unsigned char maxTier);
 void vertical_actuator_transition_tier(VerticalActuatorA* a, unsigned char nextTier);
 void vertical_actuator_home(VerticalActuatorA* a);
+void vertical_actuator_drop(VerticalActuatorA* a);
+void vertical_actuator_lift(VerticalActuatorA* a);
 
 #endif

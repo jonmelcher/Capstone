@@ -30,7 +30,7 @@ static const unsigned long int MAX_STEPS = 400;
 static const unsigned char STEPPER_STATES = 8;
 
 static const unsigned long int STEPPER_DELAY_MIN = 1500;
-static const unsigned long int STEPPER_DELAY_MAX = 4500;
+static const unsigned long int STEPPER_DELAY_MAX = 2500;
 
 // number of degrees per state transition (0.9) * 10
 static const unsigned char STEPPER_RATIO = 9;
