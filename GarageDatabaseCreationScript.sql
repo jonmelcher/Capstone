@@ -163,6 +163,7 @@ CREATE PROCEDURE GetVehicleInfoRecord
 	@id char(10)
 AS
 	SELECT
+		VehicleID,
 		Mileage,
 		ModelYear,
 		Make,

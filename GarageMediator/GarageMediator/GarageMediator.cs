@@ -86,9 +86,22 @@ namespace GarageMediator
                 (State as MediatorProcessingState).ProcessVehicle(assignment);
         }
 
-        public void Kill()
+        public void RequestKill()
         {
             State.Kill(this);
+        }
+
+        public void RequestReset()
+        {
+            if (!(State is MediatorKilledState))
+                return;
+
+            MicroCommunication = SerialPortServerFactory.CreateServer(
+                SerialPortServerFactory.SerialPortServerType.RS232) as RS232Server;
+            RFIDCommunication = SerialPortServerFactory.CreateServer(
+                SerialPortServerFactory.SerialPortServerType.Parallax28140) as Parallax28140Server;
+
+            Request();
         }
     }
 }

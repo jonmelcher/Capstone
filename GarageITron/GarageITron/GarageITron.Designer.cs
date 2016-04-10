@@ -30,6 +30,7 @@
         {
             this.garageMenuUI = new System.Windows.Forms.TabControl();
             this.garageMenu1 = new System.Windows.Forms.TabPage();
+            this.rescanUI = new System.Windows.Forms.Button();
             this.killServersUI = new System.Windows.Forms.Button();
             this.startServersUI = new System.Windows.Forms.Button();
             this.vehicleProcessStatusUI = new System.Windows.Forms.ListBox();
@@ -38,7 +39,7 @@
             this.processVehicleUI = new System.Windows.Forms.Button();
             this.garageMenu2 = new System.Windows.Forms.TabPage();
             this.vehicleInformationUI = new System.Windows.Forms.ListBox();
-            this.rescanUI = new System.Windows.Forms.Button();
+            this.resetServersUI = new System.Windows.Forms.Button();
             this.garageMenuUI.SuspendLayout();
             this.garageMenu1.SuspendLayout();
             this.garageMenu2.SuspendLayout();
@@ -56,6 +57,7 @@
             // 
             // garageMenu1
             // 
+            this.garageMenu1.Controls.Add(this.resetServersUI);
             this.garageMenu1.Controls.Add(this.rescanUI);
             this.garageMenu1.Controls.Add(this.killServersUI);
             this.garageMenu1.Controls.Add(this.startServersUI);
@@ -71,14 +73,25 @@
             this.garageMenu1.Text = "Garage Controls";
             this.garageMenu1.UseVisualStyleBackColor = true;
             // 
+            // rescanUI
+            // 
+            this.rescanUI.Enabled = false;
+            this.rescanUI.Location = new System.Drawing.Point(130, 61);
+            this.rescanUI.Name = "rescanUI";
+            this.rescanUI.Size = new System.Drawing.Size(116, 23);
+            this.rescanUI.TabIndex = 7;
+            this.rescanUI.Text = "Rescan!";
+            this.rescanUI.UseVisualStyleBackColor = true;
+            this.rescanUI.Click += new System.EventHandler(this.rescanUI_Click);
+            // 
             // killServersUI
             // 
             this.killServersUI.Enabled = false;
-            this.killServersUI.Location = new System.Drawing.Point(130, 6);
+            this.killServersUI.Location = new System.Drawing.Point(170, 6);
             this.killServersUI.Name = "killServersUI";
-            this.killServersUI.Size = new System.Drawing.Size(116, 23);
+            this.killServersUI.Size = new System.Drawing.Size(76, 23);
             this.killServersUI.TabIndex = 6;
-            this.killServersUI.Text = "Kill Servers";
+            this.killServersUI.Text = "Kill";
             this.killServersUI.UseVisualStyleBackColor = true;
             this.killServersUI.Click += new System.EventHandler(this.killServersUI_Click);
             // 
@@ -86,9 +99,9 @@
             // 
             this.startServersUI.Location = new System.Drawing.Point(6, 6);
             this.startServersUI.Name = "startServersUI";
-            this.startServersUI.Size = new System.Drawing.Size(116, 23);
+            this.startServersUI.Size = new System.Drawing.Size(76, 23);
             this.startServersUI.TabIndex = 5;
-            this.startServersUI.Text = "Start Servers";
+            this.startServersUI.Text = "Start";
             this.startServersUI.UseVisualStyleBackColor = true;
             this.startServersUI.Click += new System.EventHandler(this.startServersUI_Click);
             // 
@@ -154,16 +167,16 @@
             this.vehicleInformationUI.Size = new System.Drawing.Size(240, 186);
             this.vehicleInformationUI.TabIndex = 0;
             // 
-            // rescanUI
+            // resetServersUI
             // 
-            this.rescanUI.Enabled = false;
-            this.rescanUI.Location = new System.Drawing.Point(130, 61);
-            this.rescanUI.Name = "rescanUI";
-            this.rescanUI.Size = new System.Drawing.Size(116, 23);
-            this.rescanUI.TabIndex = 7;
-            this.rescanUI.Text = "Rescan!";
-            this.rescanUI.UseVisualStyleBackColor = true;
-            this.rescanUI.Click += new System.EventHandler(this.rescanUI_Click);
+            this.resetServersUI.Enabled = false;
+            this.resetServersUI.Location = new System.Drawing.Point(88, 6);
+            this.resetServersUI.Name = "resetServersUI";
+            this.resetServersUI.Size = new System.Drawing.Size(76, 23);
+            this.resetServersUI.TabIndex = 8;
+            this.resetServersUI.Text = "Reset";
+            this.resetServersUI.UseVisualStyleBackColor = true;
+            this.resetServersUI.Click += new System.EventHandler(this.resetServersUI_Click);
             // 
             // GarageITron
             // 
@@ -197,6 +210,7 @@
         private System.Windows.Forms.Button killServersUI;
         private System.Windows.Forms.Button startServersUI;
         private System.Windows.Forms.Button rescanUI;
+        private System.Windows.Forms.Button resetServersUI;
     }
 }
 

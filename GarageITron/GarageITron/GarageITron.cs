@@ -55,7 +55,8 @@ namespace GarageITron
         {
             if (assignment == null || information == null)
             {
-                _mediator.RequestClearID();
+                vehicleProcessStatusUI.Items.Add("Scanned: Invalid ID");
+                rescanUI.Enabled = true;
                 return;
             }
 
@@ -90,6 +91,8 @@ namespace GarageITron
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                _mediator = new GarageMediator.GarageMediator();
+                UpdateSystemStatus();
                 return;
             }
 
@@ -100,21 +103,13 @@ namespace GarageITron
 
         private void killServersUI_Click(object sender, EventArgs e)
         {
-            try
-            {
-                _mediator.Kill();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return;
-            }
-
+            _mediator.RequestKill();
             _scanned = null;
             killServersUI.Enabled = false;
             processVehicleUI.Enabled = false;
             rescanUI.Enabled = false;
-            startServersUI.Enabled = true;
+            startServersUI.Enabled = false;
+            resetServersUI.Enabled = true;
             UpdateSystemStatus();
         }
 
@@ -136,6 +131,17 @@ namespace GarageITron
             if (_scanned == null)
                 return;
             _mediator.RequestProcessVehicle(_scanned);
+            UpdateSystemStatus();
+        }
+
+        private void resetServersUI_Click(object sender, EventArgs e)
+        {
+            _mediator.RequestReset();
+            resetServersUI.Enabled = false;
+            killServersUI.Enabled = false;
+            processVehicleUI.Enabled = false;
+            rescanUI.Enabled = false;
+            startServersUI.Enabled = true;
             UpdateSystemStatus();
         }
     }

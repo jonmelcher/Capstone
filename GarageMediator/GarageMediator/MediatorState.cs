@@ -23,8 +23,8 @@ namespace GarageMediator
 
         public virtual void Kill(GarageMediator context)
         {
-            context.MicroCommunication?.StopServer();
-            context.RFIDCommunication?.StopServer();
+            context.MicroCommunication.StopServer();
+            context.RFIDCommunication.StopServer();
             context.State = new MediatorKilledState();
         }
     }
