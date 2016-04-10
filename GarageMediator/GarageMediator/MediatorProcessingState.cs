@@ -51,6 +51,7 @@ namespace GarageMediator
         {
             return (assignment) =>
             {
+                context.MicroCommunication.ClearIncoming();
                 context.MicroCommunication.Write(START_INSTRUCTION);
                 VehicleInstructionsStarted();
                 while (context.MicroCommunication.Read() != CONTINUE_INSTRUCTION)

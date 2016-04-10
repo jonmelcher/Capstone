@@ -70,6 +70,11 @@ namespace SerialCommunications
                 Write(arr[i]);
         }
 
+        public void ClearIncoming()
+        {
+            Incoming.Clear();
+        }
+
         public byte Read()
         {
             return Incoming.Count > 0 ? Incoming.Dequeue() : STOP_BIT;
