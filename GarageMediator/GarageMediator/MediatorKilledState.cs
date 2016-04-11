@@ -13,9 +13,7 @@ namespace GarageMediator
 {
     internal sealed class MediatorKilledState : MediatorState
     {
-        internal MediatorKilledState() { }
-
-        internal override void Change(GarageMediator context)
+        public override void Change(GarageMediator context)
         {
             context.State = new MediatorReadyState();
         }

@@ -33,7 +33,7 @@ namespace GarageMediator
 
         private Task _instructor;
 
-        // requires GarageMediator context to be constructed so is initialized in constructor
+        // requires GarageMediator context in order to be constructed so is initialized in constructor
         private Action<GarageAssignment> _Process;
 
         // event to propogate upwards when a vehicle has finished being processed by the microcontroller
@@ -42,11 +42,29 @@ namespace GarageMediator
         public static event Action VehicleProcessingStarted;
         public static event Action VehicleProcessed;
 
-        internal MediatorProcessingState(GarageMediator context)
+        public MediatorProcessingState(GarageMediator context)
         {
             _Process = GetProcess(context);
         }
-        
+
+        public override void ProcessVehicle(GarageAssignment assignment)
+        {
+            _instructor?.Wait();
+            _instructor = Task.Run(() => _Process(assignment));
+        }
+
+        public override void Kill(GarageMediator context)
+        {
+            _instructor?.Wait();
+            base.Kill(context);
+        }
+
+        public override void Change(GarageMediator context)
+        {
+            _instructor?.Wait();
+            context.State = new MediatorListeningState(context);
+        }
+
         private Action<GarageAssignment> GetProcess(GarageMediator context)
         {
             return (assignment) =>
@@ -69,24 +87,6 @@ namespace GarageMediator
                 context.DatabaseCommunication.MoveVehicle(assignment.ID, !assignment.Stored);
                 VehicleProcessed();
             };
-        }
-
-        internal override void ProcessVehicle(GarageAssignment assignment)
-        {
-            _instructor?.Wait();
-            _instructor = Task.Run(() => _Process(assignment));
-        }
-
-        internal override void Kill(GarageMediator context)
-        {
-            _instructor?.Wait();
-            base.Kill(context);
-        }
-
-        internal override void Change(GarageMediator context)
-        {
-            _instructor?.Wait();
-            context.State = new MediatorListeningState(context);
         }
     }
 }

@@ -33,12 +33,8 @@ namespace GarageModel
         public int GetGaragePopulation()
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
-            using (var command = new SqlCommand())
+            using (var command = GetSqlCommand(connection, "GetPopulation"))
             {
-                command.CommandText = "GetPopulation";
-                command.Connection = connection;
-                command.CommandType = CommandType.StoredProcedure;
-                
                 try
                 {
                     connection.Open();
@@ -59,14 +55,10 @@ namespace GarageModel
         public VehicleInformation GetVehicleInformation(string id)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
-            using (var command = new SqlCommand())
+            using (var command = GetSqlCommand(connection, "GetVehicleInfoRecord"))
             {
-                command.CommandText = "GetVehicleInfoRecord";
-                command.Connection = connection;
-                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@id", id));
-
-
+                
                 try
                 {
                     connection.Open();
@@ -75,7 +67,7 @@ namespace GarageModel
                         return null;
 
                     reader.Read();
-                    return new VehicleInformation( (string)reader[VehicleInfoHeaders.VehicleID.ToString()],
+                    return new VehicleInformation((string)reader[VehicleInfoHeaders.VehicleID.ToString()],
                                                         (int)reader[VehicleInfoHeaders.Mileage.ToString()],
                                                  (DateTime)reader[VehicleInfoHeaders.ModelYear.ToString()],
                                                         (string)reader[VehicleInfoHeaders.Make.ToString()],
@@ -89,14 +81,21 @@ namespace GarageModel
             return null;
         }
 
+        private SqlCommand GetSqlCommand(SqlConnection connection, string procedureName)
+        {
+            var command = new SqlCommand();
+            command.CommandText = procedureName;
+            command.Connection = connection;
+            command.CommandType = CommandType.StoredProcedure;
+            return command;
+        }
+
+
         public bool UpdateVehicleInformation(string id, int mileage, string colour, string notes)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
-            using (var command = new SqlCommand())
+            using (var command = GetSqlCommand(connection, "UpdateVehicleInfoRecord"))
             {
-                command.CommandText = "UpdateVehicleInfoRecord";
-                command.Connection = connection;
-                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@id", id));
                 command.Parameters.Add(new SqlParameter("@mileage", mileage));
                 command.Parameters.Add(new SqlParameter("@colour", colour));
@@ -114,17 +113,13 @@ namespace GarageModel
             }
         }
 
-
         // retrieve the complete record of a Vehicle in the Vehicles Table
         // based on the given id (primary key)
         public GarageAssignment GetGarageAssignment(string id)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
-            using (var command = new SqlCommand())
+            using (var command = GetSqlCommand(connection, "GetVehicleRecord"))
             {
-                command.CommandText = "GetVehicleRecord";
-                command.Connection = connection;
-                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@id", id));
 
                 try
@@ -135,8 +130,6 @@ namespace GarageModel
                         return null;
 
                     reader.Read();
-                    System.Diagnostics.Debug.WriteLine(reader.FieldCount);
-                    System.Diagnostics.Debug.WriteLine(reader.RecordsAffected);
                     return new GarageAssignment((string)reader[VehiclesHeaders.VehicleID.ToString()],
                                                         (bool)reader[VehiclesHeaders.Stored.ToString()],
                                                         (byte)reader[VehiclesHeaders.Cell.ToString()]);
@@ -152,11 +145,8 @@ namespace GarageModel
         public bool MoveVehicle(string id, bool isGoingIn)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
-            using (var command = new SqlCommand())
+            using (var command = GetSqlCommand(connection, "MoveVehicle"))
             {
-                command.CommandText = "MoveVehicle";
-                command.Connection = connection;
-                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add(new SqlParameter("@id", id));
                 command.Parameters.Add(new SqlParameter("@isGoingIn", isGoingIn));
 
