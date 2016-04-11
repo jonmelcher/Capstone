@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
+
 
 namespace GarageModel
 {
@@ -30,7 +30,7 @@ namespace GarageModel
             if ((args?.Length ?? 0) != _command.Parameters.Count)
                 throw new ArgumentException();
             for (var i = 0; i < args.Length; ++i)
-                _command.Parameters[0].Value = args[i];
+                _command.Parameters[i].Value = args[i];
         }
 
         public abstract void BuildCommand();

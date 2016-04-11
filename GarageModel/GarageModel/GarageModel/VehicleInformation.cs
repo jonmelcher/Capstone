@@ -1,7 +1,7 @@
 ﻿
 
 using System;
-
+using System.Linq;
 
 namespace GarageModel
 {
@@ -14,6 +14,20 @@ namespace GarageModel
         public string Model { get; private set; }
         public string Colour { get; set; }
         public string Notes { get; set; }
+
+        public VehicleInformation(object[] sqlResult)
+        {
+            if (sqlResult == null || sqlResult.Length != GetType().GetProperties().Count())
+                throw new ArgumentException();
+
+            ID = (string)sqlResult[0];
+            Mileage = (int)sqlResult[1];
+            ModelYear = (DateTime)sqlResult[2];
+            Make = (string)sqlResult[3];
+            Model = (string)sqlResult[4];
+            Colour = (string)sqlResult[5];
+            Notes = (string)sqlResult[6];
+        }
 
         public VehicleInformation(string id, int mileage, DateTime modelYear, string make, string model, string colour, string notes)
         {
