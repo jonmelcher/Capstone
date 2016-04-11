@@ -6,9 +6,9 @@ namespace GarageModel
     {
         public override void BuildCommand()
         {
-            _command.CommandText = "MoveVehicle";
-            _command.Parameters.Add("@id", SqlDbType.Char);
-            _command.Parameters.Add("@isGoingIn", SqlDbType.Bit);
+            Command.CommandText = "MoveVehicle";
+            Command.Parameters.Add("@id", SqlDbType.Char);
+            Command.Parameters.Add("@isGoingIn", SqlDbType.Bit);
         }
     }
 }

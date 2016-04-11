@@ -4,7 +4,7 @@
     {
         public override void BuildCommand()
         {
-            _command.CommandText = "GetPopulation";
+            Command.CommandText = "GetPopulation";
         }
     }
 }

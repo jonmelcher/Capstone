@@ -19,7 +19,7 @@ namespace GarageModel
             _builder.SetConnection(_connection);
             _builder.BuildCommand();
             _builder.AssignParameters(args);
-            return _builder.GetCommand();
+            return _builder.Command;
         }
     }
 }

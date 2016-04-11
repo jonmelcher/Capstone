@@ -6,8 +6,8 @@ namespace GarageModel
     {
         public override void BuildCommand()
         {
-            _command.CommandText = "GetVehicleRecord";
-            _command.Parameters.Add("@id", SqlDbType.Char);
+            Command.CommandText = "GetVehicleRecord";
+            Command.Parameters.Add("@id", SqlDbType.Char);
         }
     }
 }

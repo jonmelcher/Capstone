@@ -7,30 +7,25 @@ namespace GarageModel
 {
     internal abstract class GarageProcedureBuilder
     {
-        protected SqlCommand _command;
+        public SqlCommand Command { get; protected set; }
 
         protected GarageProcedureBuilder()
         {
-            _command = new SqlCommand();
-            _command.CommandType = CommandType.StoredProcedure;
+            Command = new SqlCommand();
+            Command.CommandType = CommandType.StoredProcedure;
         }
 
         public void SetConnection(SqlConnection connection)
         {
-            _command.Connection = connection;
-        }
-
-        public SqlCommand GetCommand()
-        {
-            return _command;
+            Command.Connection = connection;
         }
 
         public void AssignParameters(params object[] args)
         {
-            if ((args?.Length ?? 0) != _command.Parameters.Count)
+            if ((args?.Length ?? 0) != Command.Parameters.Count)
                 throw new ArgumentException();
             for (var i = 0; i < args.Length; ++i)
-                _command.Parameters[i].Value = args[i];
+                Command.Parameters[i].Value = args[i];
         }
 
         public abstract void BuildCommand();
