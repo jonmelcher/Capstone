@@ -9,6 +9,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -37,9 +38,9 @@ namespace GarageModel
                 var director = new GarageProcedureDirector(connection, new GetPopulationBuilder());
                 using (var command = director.Construct())
                 {
-                    object[] result = GetQuerySingleResult(command);
-                    return result != null
-                        ? (int)result[0]
+                    var results = GetQueryResults(command);
+                    return results.Count > 0
+                        ? (int)results[0][0]
                         : -1;
                 }
             }
@@ -52,9 +53,9 @@ namespace GarageModel
                 var director = new GarageProcedureDirector(connection, new GetVehicleInfoRecordBuilder());
                 using (var command = director.Construct(id))
                 {
-                    object[] result = GetQuerySingleResult(command);
-                    return result != null
-                        ? new VehicleInformation(result)
+                    var results = GetQueryResults(command);
+                    return results.Count > 0
+                        ? new VehicleInformation(results[0])
                         : null;
                 }
             }
@@ -79,9 +80,9 @@ namespace GarageModel
                 var director = new GarageProcedureDirector(connection, new GetVehicleRecordBuilder());
                 using (var command = director.Construct(id))
                 {
-                    object[] result = GetQuerySingleResult(command);
-                    return result != null
-                        ? new GarageAssignment(result)
+                    var results = GetQueryResults(command);
+                    return results.Count > 0 ?
+                        new GarageAssignment(results[0])
                         : null;
                 }
             }
@@ -99,22 +100,22 @@ namespace GarageModel
             }
         }
 
-        private object[] GetQuerySingleResult(SqlCommand command)
+        private List<object[]> GetQueryResults(SqlCommand command)
         {
-            object[] result = null;
+            var results = new List<object[]>();
             try
             {
                 command.Connection.Open();
                 var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
-                if (!reader.HasRows)
-                    return result;
-
-                reader.Read();
-                result = new object[reader.FieldCount];
-                reader.GetValues(result);
+                while (reader.Read())
+                {
+                    var result = new object[reader.FieldCount];
+                    reader.GetValues(result);
+                    results.Add(result);
+                }
             }
             catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
-            return result;
+            return results;
         }
 
         private bool GetNonQueryResults(SqlCommand command)
