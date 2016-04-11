@@ -42,8 +42,15 @@
   <ItemGroup>
     <Compile Include="DataSource.cs" />
     <Compile Include="GarageAssignment.cs" />
+    <Compile Include="GarageProcedureDirector.cs" />
+    <Compile Include="GetPopulationBuilder.cs" />
+    <Compile Include="GarageProcedureBuilder.cs" />
     <Compile Include="GarageRepository.cs" />
+    <Compile Include="GetVehicleInfoRecordBuilder.cs" />
+    <Compile Include="GetVehicleRecordBuilder.cs" />
+    <Compile Include="MoveVehicleBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UpdateVehicleInfoRecordBuilder.cs" />
     <Compile Include="VehicleInformation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

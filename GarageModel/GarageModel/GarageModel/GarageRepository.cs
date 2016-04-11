@@ -33,83 +33,62 @@ namespace GarageModel
         public int GetGaragePopulation()
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
-            using (var command = GetSqlCommand(connection, "GetPopulation"))
             {
-                try
+                var director = new GarageProcedureDirector(connection, new GetPopulationBuilder());
+                using (var command = director.Construct())
                 {
-                    connection.Open();
-                    var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
-                    if (!reader.HasRows)
-                        return -1;
+                    try
+                    {
+                        connection.Open();
+                        var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
+                        if (!reader.HasRows)
+                            return -1;
 
-                    reader.Read();
-                    return (int)reader[VehicleStatisticHeaders.Population.ToString()];
+                        reader.Read();
+                        return (int)reader[VehicleStatisticHeaders.Population.ToString()];
+                    }
+                    catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
                 }
-                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
             }
-
             return -1;
         }
-
 
         public VehicleInformation GetVehicleInformation(string id)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
-            using (var command = GetSqlCommand(connection, "GetVehicleInfoRecord"))
             {
-                command.Parameters.Add(new SqlParameter("@id", id));
-                
-                try
+                var director = new GarageProcedureDirector(connection, new GetVehicleInfoRecordBuilder());
+                using (var command = director.Construct(id))
                 {
-                    connection.Open();
-                    var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
-                    if (!reader.HasRows)
-                        return null;
+                    try
+                    {
+                        connection.Open();
+                        var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
+                        if (!reader.HasRows)
+                            return null;
 
-                    reader.Read();
-                    return new VehicleInformation((string)reader[VehicleInfoHeaders.VehicleID.ToString()],
-                                                        (int)reader[VehicleInfoHeaders.Mileage.ToString()],
-                                                 (DateTime)reader[VehicleInfoHeaders.ModelYear.ToString()],
-                                                        (string)reader[VehicleInfoHeaders.Make.ToString()],
-                                                       (string)reader[VehicleInfoHeaders.Model.ToString()],
-                                                      (string)reader[VehicleInfoHeaders.Colour.ToString()],
-                                                       (string)reader[VehicleInfoHeaders.Notes.ToString()]);
+                        reader.Read();
+                        return new VehicleInformation((string)reader[VehicleInfoHeaders.VehicleID.ToString()],
+                                                            (int)reader[VehicleInfoHeaders.Mileage.ToString()],
+                                                     (DateTime)reader[VehicleInfoHeaders.ModelYear.ToString()],
+                                                            (string)reader[VehicleInfoHeaders.Make.ToString()],
+                                                           (string)reader[VehicleInfoHeaders.Model.ToString()],
+                                                          (string)reader[VehicleInfoHeaders.Colour.ToString()],
+                                                           (string)reader[VehicleInfoHeaders.Notes.ToString()]);
+                    }
+                    catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
                 }
-                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
             }
-
             return null;
         }
-
-        private SqlCommand GetSqlCommand(SqlConnection connection, string procedureName)
-        {
-            var command = new SqlCommand();
-            command.CommandText = procedureName;
-            command.Connection = connection;
-            command.CommandType = CommandType.StoredProcedure;
-            return command;
-        }
-
 
         public bool UpdateVehicleInformation(string id, int mileage, string colour, string notes)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
-            using (var command = GetSqlCommand(connection, "UpdateVehicleInfoRecord"))
             {
-                command.Parameters.Add(new SqlParameter("@id", id));
-                command.Parameters.Add(new SqlParameter("@mileage", mileage));
-                command.Parameters.Add(new SqlParameter("@colour", colour));
-                command.Parameters.Add(new SqlParameter("@notes", notes));
-
-                try
-                {
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                    return true;
-                }
-                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
-
-                return false;
+                var director = new GarageProcedureDirector(connection, new UpdateVehicleInfoRecordBuilder());
+                using (var command = director.Construct(id, mileage, colour, notes))
+                    return GetNonQueryResults(command);
             }
         }
 
@@ -118,25 +97,25 @@ namespace GarageModel
         public GarageAssignment GetGarageAssignment(string id)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
-            using (var command = GetSqlCommand(connection, "GetVehicleRecord"))
             {
-                command.Parameters.Add(new SqlParameter("@id", id));
-
-                try
+                var director = new GarageProcedureDirector(connection, new GetVehicleRecordBuilder());
+                using (var command = director.Construct(id))
                 {
-                    connection.Open();
-                    var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
-                    if (!reader.HasRows)
-                        return null;
+                    try
+                    {
+                        connection.Open();
+                        var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
+                        if (!reader.HasRows)
+                            return null;
 
-                    reader.Read();
-                    return new GarageAssignment((string)reader[VehiclesHeaders.VehicleID.ToString()],
-                                                        (bool)reader[VehiclesHeaders.Stored.ToString()],
-                                                        (byte)reader[VehiclesHeaders.Cell.ToString()]);
+                        reader.Read();
+                        return new GarageAssignment((string)reader[VehiclesHeaders.VehicleID.ToString()],
+                                                            (bool)reader[VehiclesHeaders.Stored.ToString()],
+                                                            (byte)reader[VehiclesHeaders.Cell.ToString()]);
+                    }
+                    catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
                 }
-                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
             }
-
             return null;
         }
 
@@ -145,21 +124,22 @@ namespace GarageModel
         public bool MoveVehicle(string id, bool isGoingIn)
         {
             using (var connection = new SqlConnection(DataSource.ConnectionString))
-            using (var command = GetSqlCommand(connection, "MoveVehicle"))
             {
-                command.Parameters.Add(new SqlParameter("@id", id));
-                command.Parameters.Add(new SqlParameter("@isGoingIn", isGoingIn));
-
-                try
-                {
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                    return true;
-                }
-                catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
-
-                return false;
+                var director = new GarageProcedureDirector(connection, new MoveVehicleBuilder());
+                using (var command = director.Construct(id, isGoingIn))
+                    return GetNonQueryResults(command);
             }
+        }
+
+        private bool GetNonQueryResults(SqlCommand command)
+        {
+            try
+            {
+                command.Connection.Open();
+                return command.ExecuteNonQuery() >= 0;
+            }
+            catch (Exception e) { System.Diagnostics.Debug.WriteLine(e.Message); }
+            return false;
         }
 
         // headers for Vehicles Table in Garage Database
