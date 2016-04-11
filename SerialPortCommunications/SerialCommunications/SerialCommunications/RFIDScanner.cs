@@ -19,11 +19,11 @@ namespace SerialCommunications
         private const byte STOP_TRANSMISSION = 0x0D;
         private const byte TRANSMISSION_LENGTH = 10;
 
-        internal string CurrentScan { get; set; } = string.Empty;
+        public string CurrentScan { get; set; } = string.Empty;
         private ThreadSafeQueue<byte> Incoming { get; set; } = new ThreadSafeQueue<byte>();
         private RFIDTransmissionState State { get; set; } = RFIDTransmissionState.Waiting;
 
-        internal void Read(byte read)
+        public void Read(byte read)
         {
             if (State == RFIDTransmissionState.Collecting)
                 ProcessRead(read);
@@ -31,7 +31,7 @@ namespace SerialCommunications
                 State = RFIDTransmissionState.Collecting;
         }
 
-        internal void Clear()
+        public void Clear()
         {
             CurrentScan = string.Empty;
             Incoming.Clear();

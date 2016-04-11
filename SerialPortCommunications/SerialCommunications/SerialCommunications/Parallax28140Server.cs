@@ -47,6 +47,11 @@ namespace SerialCommunications
             Port.Close();
         }
 
+        public void ClearScanner()
+        {
+            Scanner.Clear();
+        }
+
         private void ReaderProcess()
         {
             while (_isRunning)
@@ -62,11 +67,6 @@ namespace SerialCommunications
 
                 Thread.Sleep(DEFAULT_DELAY_MS);
             }
-        }
-
-        public void ClearScanner()
-        {
-            Scanner.Clear();
         }
     }
 }
