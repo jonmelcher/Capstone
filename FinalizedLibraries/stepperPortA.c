@@ -29,8 +29,8 @@ static const unsigned long int MAX_STEPS = 400;
 // number of transition states of the stepper motor (half steps)
 static const unsigned char STEPPER_STATES = 8;
 
-static const unsigned long int STEPPER_DELAY_MIN = 1500;
-static const unsigned long int STEPPER_DELAY_MAX = 2500;
+static const unsigned long int STEPPER_DELAY_MIN = 2500;
+static const unsigned long int STEPPER_DELAY_MAX = 10000;
 
 // number of degrees per state transition (0.9) * 10
 static const unsigned char STEPPER_RATIO = 9;
@@ -117,7 +117,6 @@ void stepper_sync(StepperA* motor) {
     currentState &= motor->states[motor->state];        // masks upper nibble with current motor state
     PORTA = currentState;                               // PORTA is synced with motor
     stepper_delay(motor);                               // delay before torque released
-    stepper_release_torque(motor);                      // releases torque on all leads
 }
 
 // (private) steps given number of steps with speed up / slow down
@@ -143,6 +142,9 @@ void stepper_steps(StepperA* motor, unsigned long int steps) {
             }
             break;
     }
+
+    for (i = 0; i < STEPPER_DELAY_MAX >> 1; ++i) ;
+    stepper_release_torque(motor);
 }
 
 // (private) gets number of steps it would take to get to the given position in the given direction
