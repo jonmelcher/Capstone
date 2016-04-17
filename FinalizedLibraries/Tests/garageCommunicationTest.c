@@ -7,9 +7,9 @@ static const unsigned long int DEGREES_BETWEEN_CELLS = 45;
 static const unsigned char OUTGOING = 0x20;
 static const unsigned char INCOMING = 0x21;
 static const unsigned long long int DELAY_BETWEEN_MOVEMENTS_MS = 1000;
-static const unsigned char CONTINUE_INSTRUCTION = 0xF1;
-static const unsigned char STOP_INSTRUCTION = 0xF2;
-static const unsigned char INSTRUCTIONS_COMPLETED = 0xF3;
+static const unsigned char CONTINUE_INSTRUCTION = 0x01;
+static const unsigned char STOP_INSTRUCTION = 0x02;
+static const unsigned char INSTRUCTIONS_COMPLETED = 0x03;
 
 void main(void) {
     unsigned char cell;
