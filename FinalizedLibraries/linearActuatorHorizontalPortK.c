@@ -30,10 +30,10 @@ static const unsigned char HORIZONTAL_ACTUATOR_EXTENDING_FLAG = 0x10;
 
 // amount of time in milliseconds to guarantee 4 inch extension/retraction
 // (22.5 seconds * 0.2 inches / second = 4.5 inches)
-static const unsigned long long int ACTUATION_INTERVAL_MS = 26000;
+static const unsigned long long int ACTUATION_INTERVAL_MS = 21000;
 
 // amount of time in milliseconds to delay after disabling actuator
-static const unsigned long long int STOP_DELAY_MS = 1000;
+static const unsigned long long int STOP_DELAY_MS = 100;
 
 // initializes PORTK and state of actuator to be off and retracting
 // ensure that the real-life counterpart is fully retracted at this point!

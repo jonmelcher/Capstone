@@ -31,5 +31,6 @@ void vertical_actuator_transition_tier(VerticalActuatorA* a, unsigned char nextT
 void vertical_actuator_home(VerticalActuatorA* a);
 void vertical_actuator_drop(VerticalActuatorA* a);
 void vertical_actuator_lift(VerticalActuatorA* a);
+void vertical_actuator_actuate(VerticalActuatorA* a, unsigned char actuationFlag, unsigned long long int ms);
 
 #endif

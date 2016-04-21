@@ -14,7 +14,6 @@
 // private prototypes
 void vertical_actuator_sync(VerticalActuatorA* a);
 void vertical_actuator_disable(VerticalActuatorA* a);
-void vertical_actuator_actuate(VerticalActuatorA* a, unsigned char actuationFlag, unsigned long long int ms);
 
 
 // PIN 60 - POWER (ON / OFF)
@@ -29,12 +28,13 @@ static const unsigned char VERTICAL_ACTUATOR_ON_FLAG = 0x08;
 static const unsigned char VERTICAL_ACTUATOR_EXTENDING_FLAG = 0x04;
 
 // corresponds to a 2 1/2 inch actuation (12.5 seconds * 0.2 inches / second = 2.5 inches)
-static const unsigned long long int DROP_INTERVAL_MS = 10000;
+static const unsigned long long int DROP_INTERVAL_MS = 7500;
 
 static const unsigned char TIERS = 3;
 
 // corresponds to a 3 3/4 inch actuation (18.75 seconds * 0.2 inches / second = 3.75 inches)
-static const unsigned long long int TIER_INTERVAL_MS = 18500;
+static const unsigned long long int TIER_INTERVAL_UP_MS = 18500;
+static const unsigned long long int TIER_INTERVAL_DOWN_MS = 18000;
 
 // amount of time in milliseconds to delay after disabling actuator
 static const unsigned long long int STOP_DELAY_MS = 100;
@@ -43,7 +43,7 @@ static const unsigned long long int STOP_DELAY_MS = 100;
 void vertical_actuator_init(VerticalActuatorA* a) {
     a->maxTier = TIERS;
     a->tier = 0;                                    // assume linear actuator is fully retracted
-    a->isDropped = 1;                               // meaning we are on bottom tier and in dropped position
+    a->isDropped = 0;                               // meaning we are on bottom tier and in dropped position
     a->isOn = 0;
     a->isExtending = 0;
     DDRA |= ~(VERTICAL_ACTUATOR_MASK);
@@ -114,11 +114,11 @@ void vertical_actuator_transition_tier(VerticalActuatorA* a, unsigned char nextT
         vertical_actuator_lift(a);
 
     // move to target tier in the normal position and update state
-    vertical_actuator_actuate(a, extension, TIER_INTERVAL_MS * tierDifference);
+    vertical_actuator_actuate(a, extension, extension ? TIER_INTERVAL_UP_MS * tierDifference : TIER_INTERVAL_DOWN_MS * tierDifference);
     a->tier = nextTier;
 }
 
 // ensure that actuator is completely retracted by delaying longer
 void vertical_actuator_home(VerticalActuatorA* a) {
-    vertical_actuator_actuate(a, 0, TIER_INTERVAL_MS << 1);
+    vertical_actuator_actuate(a, 0, TIER_INTERVAL_DOWN_MS << 1);
 }

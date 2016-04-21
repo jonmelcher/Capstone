@@ -29,7 +29,7 @@ static const unsigned char STEP_DIFFERENCE = 4;
 
 // number of transition states of the stepper motor (half steps)
 static const unsigned char STEPPER_STATES = 8;
-static const unsigned long int STEPPER_DELAY_MAX = 3500;
+static const unsigned long int STEPPER_DELAY_MAX = 4200;
 
 // number of degrees per state transition (0.9) * 10
 static const unsigned char STEPPER_RATIO = 9;
