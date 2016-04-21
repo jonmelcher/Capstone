@@ -25,11 +25,10 @@ static const unsigned char COUNTERCLOCKWISE = 0;
 
 // amount of steps the motor must take to move the rotational platform 360 degrees
 static const unsigned long int MAX_STEPS = 400;
+static const unsigned char STEP_DIFFERENCE = 4;
 
 // number of transition states of the stepper motor (half steps)
 static const unsigned char STEPPER_STATES = 8;
-
-static const unsigned long int STEPPER_DELAY_MIN = 2000;
 static const unsigned long int STEPPER_DELAY_MAX = 3500;
 
 // number of degrees per state transition (0.9) * 10
@@ -94,7 +93,11 @@ void stepper_circle(StepperA* motor) {
 // causes stepper to rotate rotational platform a specified number of degrees
 // note that degrees are always positive; negative we can simply toggle direction and rotate
 void stepper_rotate(StepperA* motor, unsigned long int degrees) {
-    stepper_steps(motor, ((degrees % DEGREES_IN_CIRCLE) * RATIO_FACTOR) / STEPPER_RATIO);
+    stepper_steps(motor, stepper_degrees_to_position(degrees));
+}
+
+unsigned long int stepper_degrees_to_position(unsigned long int degrees) {
+    return ((degrees % DEGREES_IN_CIRCLE) * RATIO_FACTOR) / STEPPER_RATIO;
 }
 
 // causes stepper to rotate back to starting position in whichever direction is quickest
@@ -122,31 +125,21 @@ void stepper_sync(StepperA* motor) {
 
 // (private) steps given number of steps with speed up / slow down
 void stepper_steps(StepperA* motor, unsigned long int steps) {
-    unsigned long int step_difference;
     unsigned long int i;
-    switch (steps) {
-        case 0:
-            break;
-        case 1:
-            stepper_sync(motor);
-            stepper_step(motor);
-            break;
-        default:
-            step_difference = (STEPPER_DELAY_MAX - STEPPER_DELAY_MIN) / steps;
-            stepper_sync(motor);
-            for (i = 0; i < steps >> 1; ++i) {
-                stepper_step(motor);
-                motor->delay -= step_difference;
-            }
-            for (i = 0; i < steps >> 1; ++i) {
-                stepper_step(motor);
-                motor->delay += step_difference;
-            }
-            break;
+    if (!steps)
+        return;
+    if (steps == 1) {
+        stepper_step(motor);
+        return;
     }
-
-    for (i = 0; i < STEPPER_DELAY_MAX >> 1; ++i) ;
-    stepper_release_torque(motor);
+    for (i = 0; i < steps >> 1; ++i) {
+        stepper_step(motor);
+        motor->delay -= STEP_DIFFERENCE;
+    }
+    for (i = 0; i < steps >> 1; ++i) {
+        stepper_step(motor);
+        motor->delay += STEP_DIFFERENCE;
+    }
 }
 
 // (private) gets number of steps it would take to get to the given position in the given direction

@@ -29,17 +29,19 @@ static const unsigned char VERTICAL_ACTUATOR_ON_FLAG = 0x08;
 static const unsigned char VERTICAL_ACTUATOR_EXTENDING_FLAG = 0x04;
 
 // corresponds to a 2 1/2 inch actuation (12.5 seconds * 0.2 inches / second = 2.5 inches)
-static const unsigned long long int DROP_INTERVAL_MS = 12500;
+static const unsigned long long int DROP_INTERVAL_MS = 10000;
+
+static const unsigned char TIERS = 3;
 
 // corresponds to a 3 3/4 inch actuation (18.75 seconds * 0.2 inches / second = 3.75 inches)
-static const unsigned long long int TIER_INTERVAL_MS = 18750;
+static const unsigned long long int TIER_INTERVAL_MS = 18500;
 
 // amount of time in milliseconds to delay after disabling actuator
-static const unsigned long long int STOP_DELAY_MS = 1000;
+static const unsigned long long int STOP_DELAY_MS = 100;
 
 // initializes DDRA / PORTA and state of actuator to be fully retracted and off (make sure this reflects real life)
-void vertical_actuator_init(VerticalActuatorA* a, unsigned char maxTier) {
-    a->maxTier = maxTier;
+void vertical_actuator_init(VerticalActuatorA* a) {
+    a->maxTier = TIERS;
     a->tier = 0;                                    // assume linear actuator is fully retracted
     a->isDropped = 1;                               // meaning we are on bottom tier and in dropped position
     a->isOn = 0;

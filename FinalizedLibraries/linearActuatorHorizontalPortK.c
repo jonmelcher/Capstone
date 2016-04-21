@@ -89,10 +89,6 @@ void horizontal_actuator_actuate(HorizontalActuatorK* a, unsigned char direction
     a->isOn = HORIZONTAL_ACTUATOR_ON_FLAG;
     a->isExtending = directionFlag;
     horizontal_actuator_sync(a);
-
-    // actuate
     timer_delay_ms(ms);
-
-    // stop
     horizontal_actuator_disable(a); 
 }

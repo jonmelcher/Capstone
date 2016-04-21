@@ -34,5 +34,6 @@ void stepper_home(StepperA* motor);
 void stepper_circle(StepperA* motor);
 void stepper_rotate(StepperA* motor, unsigned long int degrees);
 void stepper_set_position(StepperA* motor, unsigned long int position);
+unsigned long int stepper_degrees_to_position(unsigned long int degrees);
 
 #endif
