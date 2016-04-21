@@ -5,6 +5,7 @@
 #include "garageCommunication.h"
 #include "garage.h"
 
+
 void main(void) {
 
     StepperA rotational;                            // 5V 6-lead unipolar stepper motor interface
@@ -20,7 +21,11 @@ void main(void) {
     vertical_actuator_init(&vertical);              // initalize vertical linear actuator interface
 
     for(;;) {
+
+        // retrieve instruction from C# app
         get_instruction(&instruction);
+
+        // process instruction
         automation_process(&rotational, &vertical, &horizontal, &instruction);
     }
 }
